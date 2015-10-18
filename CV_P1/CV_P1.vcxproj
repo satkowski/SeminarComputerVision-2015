@@ -21,9 +21,11 @@
   <ItemGroup>
     <ClInclude Include="commonDefines.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="multiset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="multiset.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{37CA7376-19E7-4B30-B6C4-4A5FA89C5479}</ProjectGuid>

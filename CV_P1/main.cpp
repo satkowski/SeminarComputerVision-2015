@@ -107,8 +107,8 @@ PointVec3fQueue getPriorityQueue(Mat* image)
         }
 
     //Add the two gradients together
-    for (int cX = 0; cX < image->cols; cX++)
-        for (int cY = 0; cY < image->rows; cY++)
+    for (int cX = 1; cX < image->cols - 1; cX++)
+        for (int cY = 1; cY < image->rows - 1; cY++)
             queue.insert(std::pair<Point, Vec3d>(Point(cX, cY), partDerivX.at<Vec3d>(cY, cX) + partDerivY.at<Vec3d>(cY, cX)));
 
     return queue;
@@ -125,5 +125,5 @@ static void onThreshholdTrackbar(int, void* userdata)
 
 #pragma endregion
 
-
+    
 }

@@ -8,3 +8,15 @@ bool compareVec3d::operator()(const std::pair<cv::Point, cv::Vec3d>& left, const
     //Return if the left vector is less the right or not
     return leftSum < rightSum;
 }
+
+std::pair<cv::Point, cv::Vec3d> findPointVec3fQueueElement(PointVec3fQueue* queue, cv::Point key)
+{
+    PointVec3fQueue::iterator elemIter = queue->begin();
+    for (unsigned int i = 0; i < queue->size(); i++)
+    {
+        if (key == elemIter->first)
+            return *elemIter;
+        ++elemIter;
+    }
+    return std::pair<cv::Point, cv::Vec3d>(cv::Point(-1, -1), cv::Vec3f(0, 0));
+}

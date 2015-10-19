@@ -14,4 +14,6 @@ struct compareVec3d
 
 typedef std::multiset<std::pair<cv::Point, cv::Vec3d>, compareVec3d> PointVec3fQueue;
 
+std::pair<cv::Point, cv::Vec3d> findPointVec3fQueueElement(cv::Point key);
+
 #endif // MULTISET_H

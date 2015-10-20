@@ -61,7 +61,7 @@ int main(int argc, const char** argv)
     imshow(INPUTIMAGE_WINDOW, inputImage);
 
     // Adding the maxdistance trackbar to the window
-    createTrackbar("Threshhold", OUTPUTIMAGE_WINDOW, &threshhold, 50, onThreshholdTrackbar, &data);
+    createTrackbar("Threshhold", OUTPUTIMAGE_WINDOW, &threshhold, 200, onThreshholdTrackbar, &data);
 
 #pragma endregion
 

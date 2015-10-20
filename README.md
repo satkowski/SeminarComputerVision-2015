@@ -7,3 +7,9 @@ Prerequisite software
 ---------------------
 
 * openCV [http://opencv.org/]
+
+Further Informations
+--------------------
+
+* all projects were created under Windows using Visual Studios
+* openCV 3.0 was used

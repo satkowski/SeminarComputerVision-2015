@@ -10,6 +10,7 @@ int main(int argc, const char** argv)
     Mat inputImage, gradientMat; 
     std::list<Point> pointList;
     int threshhold = 1;
+    // Data Vector for input parameter for the trackbar method
     Vec<void*, 4> data(&threshhold, &gradientMat, &pointList, &inputImage);
 
 #pragma endregion
@@ -24,12 +25,14 @@ int main(int argc, const char** argv)
     CommandLineParser parser(argc, argv, keyMap);
     parser.about("Superpixel");
 
+    // If help was in the list, the help list will printed
     if (parser.has(ARGUMENT_HELP_STRING))
     {
         parser.printMessage();
         return 0;
     }
 
+    // Try to parse the path in an image
     String imagePath = parser.get<String>(ARGUMENT_INPUTIMAGE_STRING);
     if (imagePath == "")
     {
@@ -47,6 +50,7 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
+    // Precomputiong of the gradient matrix and the priority list
     gradientMat = getGradientMat(&inputImage);
     pointList = getPriorityList(&gradientMat);
 
@@ -61,10 +65,11 @@ int main(int argc, const char** argv)
     imshow(INPUTIMAGE_WINDOW, inputImage);
 
     // Adding the maxdistance trackbar to the window
-    createTrackbar("Threshhold", OUTPUTIMAGE_WINDOW, &threshhold, 200, onThreshholdTrackbar, &data);
+    createTrackbar("Threshhold", OUTPUTIMAGE_WINDOW, &threshhold, 150, onThreshholdTrackbar, &data);
 
 #pragma endregion
 
+    // Wait for any key befor the programm will be closed
     waitKey();
     return 0;
 }
@@ -75,7 +80,7 @@ Mat getGradientMat(Mat* image)
 
     Mat inputImage;
     image->convertTo(inputImage, CV_64FC3);
-
+    // Create matrices for all the gradients
     Mat partDerivX = Mat(image->rows, image->cols, CV_64FC3);
     Mat partDerivY = Mat(image->rows, image->cols, CV_64FC3);
     Mat deriv = Mat(image->rows, image->cols, CV_64FC3);
@@ -91,8 +96,9 @@ Mat getGradientMat(Mat* image)
             Vec3d gradient = Vec3d();
             Vec3d pixelPre = inputImage.at<Vec3d>(cY, cX - 1);
             Vec3d pixelNext = inputImage.at<Vec3d>(cY, cX + 1);
-            //( I(x + 1, y) - I(x - 1, y) ) / 2
+            // Calculate over all channels
             for (int i = 0; i < 3; i++)
+                //( I(x + 1, y) - I(x - 1, y) ) / 2
                 gradient[i] = (pixelNext.val[i] - pixelPre.val[i]) / 2;
             partDerivX.at<Vec3d>(cY, cX) = gradient;
         }
@@ -104,8 +110,9 @@ Mat getGradientMat(Mat* image)
             Vec3d gradient = Vec3d();
             Vec3d pixelPre = inputImage.at<Vec3d>(cY - 1, cX);
             Vec3d pixelNext = inputImage.at<Vec3d>(cY + 1, cX);
-            //( I(x, y + 1) - I(x, y - 1) ) / 2
+            // Calculate over all channels
             for (int i = 0; i < 3; i++)
+                //( I(x, y + 1) - I(x, y - 1) ) / 2
                 gradient[i] = (pixelNext.val[i] - pixelPre.val[i]) / 2;
             partDerivY.at<Vec3d>(cY, cX) = gradient;
         }
@@ -139,6 +146,7 @@ static void onThreshholdTrackbar(int, void* userdata)
 {
 #pragma region Casting of userdata
 
+    // Get the date vector from the parameters and cast all parameters back
     Vec<void*, 4> data = *static_cast<Vec<void*, 4>*>(userdata);
     int* threshhold = static_cast<int*>(data.val[0]);
     Mat* gradientMat = static_cast<Mat*>(data.val[1]);
@@ -163,6 +171,7 @@ static void onThreshholdTrackbar(int, void* userdata)
 
 #pragma endregion
 
+    // Go through all pixel in the image
     while (priorityList.size() > 0)
     {
 #pragma region Initialization
@@ -178,6 +187,7 @@ static void onThreshholdTrackbar(int, void* userdata)
 
 #pragma region Getting super pixel pixels
 
+        // Go through all pixel that are in the super pixel and look at their neighbours
         std::list<Point>::iterator superPixelPixelsIter = superPixelPixels.begin();
         for (int i = 0; i < superPixelPixels.size(); i++)
         {

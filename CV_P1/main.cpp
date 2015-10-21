@@ -84,8 +84,12 @@ Mat getGradientMat(Mat* image)
     Mat partDerivX = Mat(image->rows, image->cols, CV_64FC3);
     Mat partDerivY = Mat(image->rows, image->cols, CV_64FC3);
     Mat deriv = Mat(image->rows, image->cols, CV_64FC3);
+    // Mesurmeant of the time
+    clock_t beginTime = clock();
 
 #pragma endregion
+
+    std::cout << "Calculate the gradient (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ") ...";
 
 #pragma region Gradient in both directions
 
@@ -119,16 +123,29 @@ Mat getGradientMat(Mat* image)
 
 #pragma endregion
 
+#pragma region Combine both gradients
+
     // Add the two gradients together
     for (int cX = 0; cX < image->cols; cX++)
         for (int cY = 0; cY < image->rows; cY++)
             deriv.at<Vec3d>(cY, cX) = partDerivX.at<Vec3d>(cY, cX) + partDerivY.at<Vec3d>(cY, cX);
+
+#pragma endregion
+
+    std::cout << " Finished (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ")" << std::endl;
 
     return deriv;
 }
 
 std::list<Point> getPriorityList(Mat* gradientMat)
 {
+    // Mesurmeant of the time
+    clock_t beginTime = clock();
+
+    std::cout << "Calculate the priority List (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ") ...";
+
+#pragma region Calculate Priority List
+
     // Sort all Points
     Vec3dPointMap map = Vec3dPointMap();
     for (int cY = 1; cY < gradientMat->rows; cY++)
@@ -138,6 +155,10 @@ std::list<Point> getPriorityList(Mat* gradientMat)
     std::list<Point> priorityList = std::list<Point>();
     for each (std::pair<Vec3d, Point> pair in map)
         priorityList.push_back(pair.second);
+
+#pragma endregion
+
+    std::cout << " Finished (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ")" << std::endl;
 
     return priorityList;
 }
@@ -169,7 +190,12 @@ static void onThreshholdTrackbar(int, void* userdata)
     Mat_<bool> avaibleMat = Mat_<bool>(outputImage.rows, outputImage.cols, true);
     avaibleMat.at<bool>(*priorityList.begin()) = false;
 
+    // Mesurmeant of the time
+    clock_t beginTime = clock();
+
 #pragma endregion
+
+    std::cout << "Search for super pixels (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ") ...";
 
     // Go through all pixel in the image
     while (priorityList.size() > 0)
@@ -227,6 +253,8 @@ static void onThreshholdTrackbar(int, void* userdata)
 
 #pragma endregion
     }
+
+    std::cout << " Finished (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ")" << std::endl;
 
     imshow(OUTPUTIMAGE_WINDOW, outputImage);
 }

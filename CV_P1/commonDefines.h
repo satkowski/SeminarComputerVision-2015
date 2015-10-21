@@ -9,4 +9,6 @@
 #define INPUTIMAGE_WINDOW "OriginalImage"
 #define OUTPUTIMAGE_WINDOW "SuperpixelImage"
 
+#define THRESHHOLD_MAX_VALUE 150
+
 #endif // COMMONDEFINES_H

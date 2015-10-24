@@ -9,6 +9,9 @@
 #define INPUTIMAGE_WINDOW "OriginalImage"
 #define OUTPUTIMAGE_WINDOW "SuperpixelImage"
 
-#define THRESHHOLD_MAX_VALUE 150
+#define THRESHHOLD_MAX_VALUE 20
+
+#define OUTPUTIMAGE_NAME "outputImage.jpg"
+#define OUTPUTIMAGE_PATH "../Bilder/" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

@@ -205,6 +205,8 @@ static void onThreshholdTrackbar(int, void* userdata)
         // List for possible pixel that are in the super pixel
         std::list<Point> superPixelPixels = std::list<Point>();
         superPixelPixels.push_back(*priorityList.begin());
+        // Actual gradient of the first point from the superpixel
+        Vec3d gradientValue = gradientMat->at<Vec3d>(*priorityList.begin());
         // Varaibles to compute mean color value
         Vec3i colorSum = static_cast<Vec3i>(outputImage.at<Vec3b>(*superPixelPixels.begin()));
         int pixelConuter = 1;
@@ -213,7 +215,7 @@ static void onThreshholdTrackbar(int, void* userdata)
 
 #pragma region Getting super pixel pixels
 
-        // Go through all pixel that are in the super pixel and look at their neighbours
+        // Go through all pixel that are in the super pixel and look at their neighbours and maybe add them
         std::list<Point>::iterator superPixelPixelsIter = superPixelPixels.begin();
         for (int i = 0; i < superPixelPixels.size(); i++)
         {
@@ -226,9 +228,10 @@ static void onThreshholdTrackbar(int, void* userdata)
                 if (0 > nextPoint.x || nextPoint.x >= outputImage.cols ||
                     0 > nextPoint.y || nextPoint.y >= outputImage.rows)
                     continue;
+                double test = lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue);
                 // If the distance is less than the threshhold and the pixel is avaible
                 if (avaibleMat.at<bool>(nextPoint) &&
-                    lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientMat->at<Vec3d>(*priorityList.begin())) <= *threshhold)
+                    lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue) <= *threshhold)
                 {
                     superPixelPixels.push_back(nextPoint);
                     avaibleMat.at<bool>(nextPoint) = false;
@@ -257,4 +260,5 @@ static void onThreshholdTrackbar(int, void* userdata)
     std::cout << " Finished (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ")" << std::endl;
 
     imshow(OUTPUTIMAGE_WINDOW, outputImage);
+    imwrite(OUTPUTIMAGE_PATH, outputImage);
 }

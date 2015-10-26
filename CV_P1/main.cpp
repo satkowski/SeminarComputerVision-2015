@@ -204,10 +204,11 @@ static void onThreshholdTrackbar(int, void* userdata)
         // List for possible pixel that are in the super pixel
         std::list<Point> superPixelPixels = std::list<Point>();
         superPixelPixels.push_back(priorityPoint);
+        avaibleMat.at<bool>(priorityPoint) = false;
         // Actual gradient of the first point from the superpixel
         Vec3d gradientValue = gradientMat->at<Vec3d>(priorityPoint);
         // Varaibles to compute mean color value
-        Vec3i colorSum = static_cast<Vec3i>(outputImage.at<Vec3b>(priorityPoint));
+        Vec3d colorSum = static_cast<Vec3d>(outputImage.at<Vec3b>(priorityPoint));
         int pixelConuter = 1;
 
 #pragma endregion
@@ -237,7 +238,7 @@ static void onThreshholdTrackbar(int, void* userdata)
                     // Add this pixel to the superpixel list
                     superPixelPixels.push_back(nextPoint);
                     // Add the colour up
-                    colorSum += static_cast<Vec3i>(outputImage.at<Vec3b>(priorityPoint));
+                    colorSum += static_cast<Vec3d>(outputImage.at<Vec3b>(nextPoint));
                     pixelConuter++;
                     // Set that pixel used
                     avaibleMat.at<bool>(nextPoint) = false;

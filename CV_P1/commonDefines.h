@@ -13,10 +13,10 @@
 #define OUTPUTIMAGE_WINDOW "SuperpixelImage"
 
 // Max threshhold of the trackbar
-#define THRESHHOLD_MAX_VALUE 20
+#define THRESHHOLD_MAX_VALUE 442
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage.jpg"
-#define OUTPUTIMAGE_PATH "../Bilder/" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGE_PATH "" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

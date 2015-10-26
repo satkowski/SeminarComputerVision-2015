@@ -171,7 +171,7 @@ static void onThreshholdTrackbar(int, void* userdata)
     Vec<void*, 4> data = *static_cast<Vec<void*, 4>*>(userdata);
     int* threshhold = static_cast<int*>(data.val[0]);
     Mat* gradientMat = static_cast<Mat*>(data.val[1]);
-    std::list<Point> priorityList = *static_cast<std::list<Point>*>(data.val[2]);
+    std::list<Point>* priorityList = static_cast<std::list<Point>*>(data.val[2]);
     Mat* outputImagePtr = static_cast<Mat*>(data.val[3]);
     Mat outputImage;
     outputImagePtr->copyTo(outputImage);
@@ -188,7 +188,6 @@ static void onThreshholdTrackbar(int, void* userdata)
     nextPixelOffset.push_back(Point(-1, 0));
     // Mat to controll if a pixel is a super pixel allready
     Mat_<bool> avaibleMat = Mat_<bool>(outputImage.rows, outputImage.cols, true);
-    avaibleMat.at<bool>(*priorityList.begin()) = false;
 
     // Mesurmeant of the time
     clock_t beginTime = clock();
@@ -198,17 +197,17 @@ static void onThreshholdTrackbar(int, void* userdata)
     std::cout << "Search for super pixels (" << (clock() - beginTime) / (float)CLOCKS_PER_SEC << ") ...";
 
     // Go through all pixel in the image
-    while (priorityList.size() > 0)
+    for each (Point priorityPoint in *priorityList)
     {
 #pragma region Initialization
 
         // List for possible pixel that are in the super pixel
         std::list<Point> superPixelPixels = std::list<Point>();
-        superPixelPixels.push_back(*priorityList.begin());
+        superPixelPixels.push_back(priorityPoint);
         // Actual gradient of the first point from the superpixel
-        Vec3d gradientValue = gradientMat->at<Vec3d>(*priorityList.begin());
+        Vec3d gradientValue = gradientMat->at<Vec3d>(priorityPoint);
         // Varaibles to compute mean color value
-        Vec3i colorSum = static_cast<Vec3i>(outputImage.at<Vec3b>(*superPixelPixels.begin()));
+        Vec3i colorSum = static_cast<Vec3i>(outputImage.at<Vec3b>(priorityPoint));
         int pixelConuter = 1;
 
 #pragma endregion
@@ -217,30 +216,33 @@ static void onThreshholdTrackbar(int, void* userdata)
 
         // Go through all pixel that are in the super pixel and look at their neighbours and maybe add them
         std::list<Point>::iterator superPixelPixelsIter = superPixelPixels.begin();
-        for (int i = 0; i < superPixelPixels.size(); i++)
+        for (int c = 0; c < superPixelPixels.size(); c++)
         {
             // Look on all neighbours of an pixel (4 connect)
             for each (Point pointOffset in nextPixelOffset)
             {
                 // Calculate 4 connect point from offset and the actual point
                 Point nextPoint = *superPixelPixelsIter + pointOffset;
+                if (!avaibleMat.at<bool>(nextPoint))
+                    continue;
                 // If pixel isn't in the image borders that pixel will be ignored
                 if (0 > nextPoint.x || nextPoint.x >= outputImage.cols ||
                     0 > nextPoint.y || nextPoint.y >= outputImage.rows)
                     continue;
-                double test = lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue);
+
                 // If the distance is less than the threshhold and the pixel is avaible
                 if (avaibleMat.at<bool>(nextPoint) &&
-                    lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue) <= *threshhold)
+                    lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue) < *threshhold)
                 {
+                    // Add this pixel to the superpixel list
                     superPixelPixels.push_back(nextPoint);
-                    avaibleMat.at<bool>(nextPoint) = false;
-                    colorSum += static_cast<Vec3i>(outputImage.at<Vec3b>(nextPoint));
+                    // Add the colour up
+                    colorSum += static_cast<Vec3i>(outputImage.at<Vec3b>(priorityPoint));
                     pixelConuter++;
+                    // Set that pixel used
+                    avaibleMat.at<bool>(nextPoint) = false;
                 }
             }
-            // Remove finished pixel from the priorityList
-            priorityList.remove(*superPixelPixels.begin());
             // Increment the pointer on the list
             ++superPixelPixelsIter;
         }

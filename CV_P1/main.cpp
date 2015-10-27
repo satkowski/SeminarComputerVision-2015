@@ -209,8 +209,7 @@ static void onThreshholdTrackbar(int, void* userdata)
         superPixelPixels.push_back(priorityPoint);
         avaibleMat.at<bool>(priorityPoint) = false;
         // Actual gradient of the first point from the superpixel
-        Vec3b priorityPixelColor = outputImagePtr->at<Vec3b>(priorityPoint);
-        Vec3d gradientValue = gradientMat->at<Vec3d>(priorityPoint);
+        Vec3d priorityPixelColor = static_cast<Vec3d>(outputImagePtr->at<Vec3b>(priorityPoint));
         // Varaibles to compute mean color value
         Vec3d colorSum = static_cast<Vec3d>(priorityPixelColor);
         int pixelConuter = 1;
@@ -235,15 +234,14 @@ static void onThreshholdTrackbar(int, void* userdata)
                 if (!avaibleMat.at<bool>(nextPoint))
                     continue;
 
-                double test = lengthVec3b(outputImagePtr->at<Vec3b>(nextPoint) - priorityPixelColor);
                 // If the distance is less than the threshhold and the pixel is avaible
                 if (avaibleMat.at<bool>(nextPoint) &&
-                    lengthVec3b(outputImagePtr->at<Vec3b>(nextPoint) - priorityPixelColor) < *threshhold)
+                    lengthVec3d(static_cast<Vec3d>(outputImagePtr->at<Vec3b>(nextPoint)) - priorityPixelColor) < *threshhold)
                 {
                     // Add this pixel to the superpixel list
                     superPixelPixels.push_back(nextPoint);
                     // Add the colour up
-                    colorSum += static_cast<Vec3d>(outputImage.at<Vec3b>(nextPoint));
+                    colorSum += static_cast<Vec3d>(outputImagePtr->at<Vec3b>(nextPoint));
                     pixelConuter++;
                     // Set that pixel used
                     avaibleMat.at<bool>(nextPoint) = false;

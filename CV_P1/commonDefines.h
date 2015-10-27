@@ -17,6 +17,6 @@
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage.jpg"
-#define OUTPUTIMAGE_PATH "" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGE_PATH "../Bilder/" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

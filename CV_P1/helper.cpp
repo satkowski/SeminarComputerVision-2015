@@ -12,3 +12,9 @@ double lengthVec3d(cv::Vec3d vec)
                 vec.val[1] * vec.val[1] +
                 vec.val[2] * vec.val[2]);
 }
+
+double lengthVec3b(cv::Vec3b vec)
+{
+    cv::Vec3d vector = static_cast<cv::Vec3d>(vec);
+    return lengthVec3d(vector);
+}

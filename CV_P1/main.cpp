@@ -9,7 +9,7 @@ int main(int argc, const char** argv)
 
     Mat inputImage, gradientMat; 
     std::list<Point> pointList;
-    int threshhold = 1;
+    int threshhold = 0;
     // Data Vector for input parameter for the trackbar method
     Vec<void*, 4> data(&threshhold, &gradientMat, &pointList, &inputImage);
 
@@ -199,6 +199,9 @@ static void onThreshholdTrackbar(int, void* userdata)
     // Go through all pixel in the image
     for each (Point priorityPoint in *priorityList)
     {
+        if (!avaibleMat.at<bool>(priorityPoint))
+            continue;
+
 #pragma region Initialization
 
         // List for possible pixel that are in the super pixel
@@ -206,9 +209,10 @@ static void onThreshholdTrackbar(int, void* userdata)
         superPixelPixels.push_back(priorityPoint);
         avaibleMat.at<bool>(priorityPoint) = false;
         // Actual gradient of the first point from the superpixel
+        Vec3b priorityPixelColor = outputImagePtr->at<Vec3b>(priorityPoint);
         Vec3d gradientValue = gradientMat->at<Vec3d>(priorityPoint);
         // Varaibles to compute mean color value
-        Vec3d colorSum = static_cast<Vec3d>(outputImage.at<Vec3b>(priorityPoint));
+        Vec3d colorSum = static_cast<Vec3d>(priorityPixelColor);
         int pixelConuter = 1;
 
 #pragma endregion
@@ -224,16 +228,17 @@ static void onThreshholdTrackbar(int, void* userdata)
             {
                 // Calculate 4 connect point from offset and the actual point
                 Point nextPoint = *superPixelPixelsIter + pointOffset;
-                if (!avaibleMat.at<bool>(nextPoint))
-                    continue;
                 // If pixel isn't in the image borders that pixel will be ignored
                 if (0 > nextPoint.x || nextPoint.x >= outputImage.cols ||
                     0 > nextPoint.y || nextPoint.y >= outputImage.rows)
                     continue;
+                if (!avaibleMat.at<bool>(nextPoint))
+                    continue;
 
+                double test = lengthVec3b(outputImagePtr->at<Vec3b>(nextPoint) - priorityPixelColor);
                 // If the distance is less than the threshhold and the pixel is avaible
                 if (avaibleMat.at<bool>(nextPoint) &&
-                    lengthVec3d(gradientMat->at<Vec3d>(nextPoint) - gradientValue) < *threshhold)
+                    lengthVec3b(outputImagePtr->at<Vec3b>(nextPoint) - priorityPixelColor) < *threshhold)
                 {
                     // Add this pixel to the superpixel list
                     superPixelPixels.push_back(nextPoint);

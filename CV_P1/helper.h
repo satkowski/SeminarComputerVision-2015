@@ -16,5 +16,7 @@ typedef std::multimap<cv::Vec3d, cv::Point, compareVec3d> Vec3dPointMap;
 
 // Calculation the length of a Vec3d
 double lengthVec3d(cv::Vec3d vec);
+// Calculation the length of a Vec3b
+double lengthVec3b(cv::Vec3b vec);
 
 #endif // MULTISET_H

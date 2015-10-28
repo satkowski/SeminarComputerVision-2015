@@ -8,6 +8,6 @@ Set the colour of a superpixel to the mean colour of all its containing pixels.
 Calling Arguments
 =================
 
--help (Show help messages)
+-help
 
--img=[Path]	(Input imagepath)
+-img=[Path]	

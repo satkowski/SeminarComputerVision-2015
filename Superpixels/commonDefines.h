@@ -16,7 +16,7 @@
 #define THRESHHOLD_MAX_VALUE 442
 
 // Outputimage name and path
-#define OUTPUTIMAGE_NAME "outputImage.jpg"
+#define OUTPUTIMAGE_NAME "outputImage_Superpixel.jpg"
 #define OUTPUTIMAGE_PATH "../Bilder/" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

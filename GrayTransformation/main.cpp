@@ -8,6 +8,7 @@ int main(int argc, const char** argv)
 #pragma region Initialization
 
     Mat inputImage;
+    int sliderParameter = 1;
 
 #pragma endregion
 
@@ -54,5 +55,47 @@ int main(int argc, const char** argv)
     }
 
 #pragma endregion
+
+#pragma region Setting the different windows
+    
+    // Creating window for the outputimage
+    namedWindow(OUTPUTIMAGE_WINDOW, 0);
+    imshow(OUTPUTIMAGE_WINDOW, inputImage);
+
+    // Creating window for the original image
+    namedWindow(INPUTIMAGE_WINDOW, 0);
+    imshow(INPUTIMAGE_WINDOW, inputImage);
+
+    switch (transformationType)
+    {
+    case 0:
+        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, logTransformation, &inputImage);
+        break;
+    case 1:
+        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, powerLawTransformation, &inputImage);
+        break;
+    case 2:
+        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, ownTransformation, &inputImage);
+        break;
+    }
+
+#pragma endregion
+
+    waitKey();
+    return 0;
+}
+
+static void logTransformation(int sliderValue, void* image)
+{
+
+}
+
+static void powerLawTransformation(int sliderValue, void* image)
+{
+
+}
+
+static void ownTransformation(int sliderValue, void* image)
+{
 
 }

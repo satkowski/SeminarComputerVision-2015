@@ -3,8 +3,6 @@
 
 #include "commonDefines.h"
 
-#include <iostream>
-#include <ctime>
 #include "opencv2/imgproc/imgproc.hpp"
 
 // Use log transformation on image

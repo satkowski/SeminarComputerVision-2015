@@ -1,17 +1,10 @@
+//-img=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\spine.jpg -type=0
 #include "main.h"
 
 using namespace cv;
 
 int main(int argc, const char** argv)
 {
-
-#pragma region Initialization
-
-    Mat inputImage;
-    int sliderParameter = 1;
-
-#pragma endregion
-
 #pragma region Argument parsing
 
     // Creating a keymap for all the arguments that can passed to that programm
@@ -39,7 +32,7 @@ int main(int argc, const char** argv)
     }
 
     // Creating the image and testing if it is empty or not
-    inputImage = imread(imagePath, CV_LOAD_IMAGE_COLOR);
+    Mat inputImage = imread(imagePath, CV_LOAD_IMAGE_COLOR);
     if (inputImage.empty())
     {
         printf("Cannot read the image %s\n", imagePath.c_str());
@@ -56,6 +49,32 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
+#pragma region Initialization
+
+    int sliderParameter = 1;
+    int sliderMaxValue = 0;
+    String sliderName = "";
+    switch (transformationType)
+    {
+    case 0:
+        sliderName = SLIDER_ALPHA_NAME;
+        sliderParameter /= SLIDER_ALPHA_COEFFICENT;
+        sliderMaxValue = SLIDER_ALPHA_MAX_VALUE;
+        break;
+    case 1:
+        sliderName = SLIDER_GAMMA_NAME;
+        sliderParameter /= SLIDER_GAMMA_COEFFICENT;
+        sliderMaxValue = SLIDER_GAMMA_MAX_VALUE;
+        break;
+    case 2:
+        sliderName = SLIDER_OWN_NAME;
+        sliderMaxValue = SLIDER_OWNTRANSFORMATION_MAX_VALUE;
+        break;        
+    }
+    Vec<void*, 2> data(&transformationType, &inputImage);
+
+#pragma endregion
+
 #pragma region Setting the different windows
     
     // Creating window for the outputimage
@@ -66,18 +85,7 @@ int main(int argc, const char** argv)
     namedWindow(INPUTIMAGE_WINDOW, 0);
     imshow(INPUTIMAGE_WINDOW, inputImage);
 
-    switch (transformationType)
-    {
-    case 0:
-        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, logTransformation, &inputImage);
-        break;
-    case 1:
-        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, powerLawTransformation, &inputImage);
-        break;
-    case 2:
-        createTrackbar("Parameter", OUTPUTIMAGE_WINDOW, &sliderParameter, 255, ownTransformation, &inputImage);
-        break;
-    }
+    createTrackbar(sliderName, OUTPUTIMAGE_WINDOW, &sliderParameter, sliderMaxValue, onTrackbarChange, &data);
 
 #pragma endregion
 
@@ -85,17 +93,30 @@ int main(int argc, const char** argv)
     return 0;
 }
 
-static void logTransformation(int sliderValue, void* image)
+static void onTrackbarChange(int sliderValue, void* userdata)
 {
+#pragma region Casting of userdata and Initialization
 
-}
+    // Get the date vector from the parameters and cast all parameters back
+    Vec<void*, 2> data = *static_cast<Vec<void*, 2>*>(userdata);
+    int* transformationType = static_cast<int*>(data.val[0]);
+    Mat input, output;
+    cvtColor(*static_cast<Mat*>(data.val[1]), input, CV_BGR2GRAY);
+    input.convertTo(input, CV_64F);
 
-static void powerLawTransformation(int sliderValue, void* image)
-{
+#pragma endregion
 
-}
+    // Decide which transformation to use
+    switch (*transformationType)
+    {
+    case 0:
+        output = logTransformation(sliderValue, &input);      break;
+    case 1:
+        output = powerLawTransformation(sliderValue, &input); break;
+    case 2:
+        output = ownTransformation(sliderValue, &input);      break;
+    }
 
-static void ownTransformation(int sliderValue, void* image)
-{
-
+    imshow(OUTPUTIMAGE_WINDOW, output);
+    imwrite(OUTPUTIMAGE_PATH, output);
 }

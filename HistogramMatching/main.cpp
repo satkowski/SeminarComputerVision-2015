@@ -64,4 +64,40 @@ int main(int argc, const char** argv)
     }
 
 #pragma endregion
+
+#pragma region Decide the method
+
+    std::vector<Mat> outputImages;
+    if (!colourMatching)
+        outputImages = histogramMatching_OneChannel(&inputImage1, &inputImage2);
+    else
+        outputImages = histogramMatching_ThreeChannel(&inputImage1, &inputImage2);
+
+#pragma endregion
+
+#pragma region Setting the windows
+    
+    // Creating window for the input images
+    namedWindow(INPUTIMAGE_1_WINDOW, 0);
+    imshow(INPUTIMAGE_1_WINDOW, inputImage1);
+    namedWindow(INPUTIMAGE_2_WINDOW, 0);
+    imshow(INPUTIMAGE_2_WINDOW, inputImage2);
+
+    // Creating window for the output images
+    namedWindow(OUTPUTIMAGE_CDF_WINDOW, 0);
+    imshow(OUTPUTIMAGE_CDF_WINDOW, outputImages.at(3));
+    namedWindow(OUTPUT_HISTOGRAM_CDF_1_WINDOWS, 0);
+    imshow(OUTPUT_HISTOGRAM_CDF_1_WINDOWS, outputImages.at(0));
+    namedWindow(OUTPUT_HISTOGRAM_CDF_2_WINDOWS, 0);
+    imshow(OUTPUT_HISTOGRAM_CDF_2_WINDOWS, outputImages.at(1));
+
+    // Save all images
+    imwrite(OUTPUTIMAGE_CDF_PATH, outputImages.at(3));
+    imwrite(OUTPUT_HISTOGRAM_CDF_1_PATH, outputImages.at(0));
+    imwrite(OUTPUT_HISTOGRAM_CDF_2_PATH, outputImages.at(1));
+
+#pragma endregion
+
+    waitKey();
+    return 0;
 }

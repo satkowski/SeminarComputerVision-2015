@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "commonDefines.h"
+#include "histogramMatching.h"
 
 #include "opencv2/highgui/highgui.hpp"
 

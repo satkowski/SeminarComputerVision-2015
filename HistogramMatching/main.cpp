@@ -24,6 +24,9 @@ int main(int argc, const char** argv)
         return 0;
     }
 
+    // Get if the matching should be in colour or not
+    bool colourMatching = parser.has(ARGUMENT_COLOUR_STRING);
+
     // Creating the first image and testing if it is empty or not
     String imagePath1 = parser.get<String>(ARGUMENT_INPUTIMAGE_1_STRING);
     if (imagePath1 == "")
@@ -31,7 +34,11 @@ int main(int argc, const char** argv)
         printf("The first image path is empty\n");
         return -1;
     }
-    Mat inputImage1 = imread(imagePath1, CV_LOAD_IMAGE_COLOR);
+    Mat inputImage1;
+    if (colourMatching)
+        inputImage1 = imread(imagePath1, CV_LOAD_IMAGE_COLOR);
+    else
+        inputImage1 = imread(imagePath1, CV_LOAD_IMAGE_GRAYSCALE);
     if (inputImage1.empty())
     {
         printf("Cannot read the image %s\n", imagePath1);
@@ -45,15 +52,16 @@ int main(int argc, const char** argv)
         printf("The second image path is empty\n");
         return -1;
     }
-    Mat inputImage2 = imread(imagePath2, CV_LOAD_IMAGE_COLOR);
+    Mat inputImage2;
+    if (colourMatching)
+        inputImage2 = imread(imagePath2, CV_LOAD_IMAGE_COLOR);
+    else
+        inputImage2 = imread(imagePath2, CV_LOAD_IMAGE_GRAYSCALE);
     if (inputImage2.empty())
     {
         printf("Cannot read the image %s\n", imagePath2);
         return -1;
     }
-
-    // Get if the matching should be in colour or not
-    bool colourMatching = parser.has(ARGUMENT_COLOUR_STRING);
 
 #pragma endregion
 }

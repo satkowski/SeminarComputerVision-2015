@@ -17,6 +17,6 @@
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage_Superpixel.jpg"
-#define OUTPUTIMAGE_PATH "../Bilder/" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

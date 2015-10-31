@@ -14,7 +14,7 @@ int main(int argc, const char** argv)
     
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
-    parser.about("Superpixel");
+    parser.about("Grey Transformation");
 
     // If help was in the list, the help list will printed
     if (parser.has(ARGUMENT_HELP_STRING))

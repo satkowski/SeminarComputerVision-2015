@@ -9,4 +9,7 @@
 // Main method
 int main(int argc, const char** argv);
 
+// If the threshhold is changed
+static void onTrackbarsChange(int, void* userdata);
+
 #endif // MAIN_H

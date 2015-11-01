@@ -25,6 +25,11 @@ int main(int argc, const char** argv)
 
     // Which filter should be used
     int filter = parser.get<int>(ARGUMENT_FILTERSELECTION_STRING);
+    if (filter < 0 && 1 > filter)
+    {
+        printf("There is no filter\n");
+        return -1;
+    }
 
     // Creating the first image and testing if it is empty or not
     String imagePath = parser.get<String>(ARGUMENT_INPUTIMAGE_STRING);
@@ -56,10 +61,40 @@ int main(int argc, const char** argv)
     imshow(INPUTIMAGE_WINDOW, inputImage);
 
     if (filter == 0)
-        imshow(OUTPUTIMAGE_WINDOW, unsarpeningFilter(&inputImage));
+    {
+        Mat output = unsarpeningFilter(&inputImage);
+        imshow(OUTPUTIMAGE_WINDOW, output);
+        imwrite(OUTPUTIMAGE_UNSHARP_PATH, output);
+    }
+    else //if(filter == 1)
+    {
+        int threshhold = 0;
+        int windowSize = 0;
+        Vec<void*, 3> data{ &inputImage, &threshhold, &windowSize };
+        createTrackbar("Threshhold", OUTPUTIMAGE_WINDOW, &threshhold, 255, onTrackbarsChange, &data);
+        createTrackbar("Window Size", OUTPUTIMAGE_WINDOW, &windowSize, 15, onTrackbarsChange, &data);
+        imshow(OUTPUTIMAGE_WINDOW, inputImage);
+    }
 
 #pragma endregion
 
     waitKey();
     return 0;
+}
+
+static void onTrackbarsChange(int, void* userdata)
+{
+#pragma region Casting of the userdata
+
+    Vec<void*, 3> data = *static_cast<Vec<void*, 3>*>(userdata);
+    Mat* inputImage = static_cast<Mat*>(data.val[0]);
+    int* threshhold = static_cast<int*>(data.val[1]);
+    int* windowSize = static_cast<int*>(data.val[2]);
+
+#pragma endregion
+
+    Mat output = medianFilter_Threshhold(inputImage, *threshhold, *windowSize);
+
+    imshow(OUTPUTIMAGE_WINDOW, output);
+    imwrite(OUTPUTIMAGE_MEDIAN_PATH, output);
 }

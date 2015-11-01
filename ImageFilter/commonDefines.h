@@ -15,7 +15,9 @@
 #define OUTPUTIMAGE_WINDOW "OutputImage"
 
 // Outputimage name and path
-#define OUTPUTIMAGE_NAME "outputImage_Filter.jpg"
-#define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGE_UNSHARP_NAME "outputImage_Unsharp.jpg"
+#define OUTPUTIMAGE_MEDIAN_NAME "outputImage_Filter.jpg"
+#define OUTPUTIMAGE_MEDIAN_PATH "../Bilder/Output/" OUTPUTIMAGE_MEDIAN_NAME
+#define OUTPUTIMAGE_UNSHARP_PATH "../Bilder/Output/" OUTPUTIMAGE_UNSHARP_NAME
 
 #endif // COMMONDEFINES_H

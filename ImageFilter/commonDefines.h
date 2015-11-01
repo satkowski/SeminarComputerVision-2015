@@ -12,10 +12,10 @@
 
 // Name of the Windows
 #define INPUTIMAGE_WINDOW "InputImage 1"
-#define OUTPUTIMAGE_CDF_WINDOW "OutputImage"
+#define OUTPUTIMAGE_WINDOW "OutputImage"
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage_Filter.jpg"
-#define OUTPUTIMAGE_CDF_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
 
 #endif // COMMONDEFINES_H

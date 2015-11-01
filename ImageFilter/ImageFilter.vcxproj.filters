@@ -21,9 +21,15 @@
     <ClInclude Include="commonDefines.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="filters.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="filters.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

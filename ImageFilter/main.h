@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "commonDefines.h"
+#include "filters.h"
 
 #include "opencv2/highgui/highgui.hpp"
 

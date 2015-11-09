@@ -1,4 +1,4 @@
-//-img1=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\spine.jpg -img2=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\lena_gray.jpg -colour=0
+//-img1=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\rocks.jpg -img2=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\fruits.jpg -colour=0
 #include "main.h"
 
 using namespace cv;
@@ -33,7 +33,7 @@ int main(int argc, const char** argv)
         printf("The first image path is empty\n");
         return -1;
     }
-    Mat inputImage1 = imread(imagePath1, CV_LOAD_IMAGE_GRAYSCALE);
+    Mat inputImage1 = imread(imagePath1, CV_LOAD_IMAGE_COLOR);
     if (inputImage1.empty())
     {
         printf("Cannot read the image %s\n", imagePath1);
@@ -47,7 +47,7 @@ int main(int argc, const char** argv)
         printf("The second image path is empty\n");
         return -1;
     }
-    Mat inputImage2 = imread(imagePath2, CV_LOAD_IMAGE_GRAYSCALE);
+    Mat inputImage2 = imread(imagePath2, CV_LOAD_IMAGE_COLOR);
     if (inputImage2.empty())
     {
         printf("Cannot read the image %s\n", imagePath2);
@@ -57,7 +57,7 @@ int main(int argc, const char** argv)
 #pragma endregion
     
     std::vector<Mat> outputImages;
-    if(colourMatching)
+    if(colourMatching == 0)
         outputImages = histogramMatching_Seperate(&inputImage1, &inputImage2);
     else
         outputImages = histogramMatching_Average(&inputImage1, &inputImage2);
@@ -72,16 +72,22 @@ int main(int argc, const char** argv)
 
     // Creating window for the output images
     namedWindow(OUTPUTIMAGE_CDF_WINDOW, 0);
-    imshow(OUTPUTIMAGE_CDF_WINDOW, outputImages.at(3));
+    imshow(OUTPUTIMAGE_CDF_WINDOW, outputImages.at(6));
     namedWindow(OUTPUT_HISTOGRAM_CDF_R_WINDOWS, 0);
     imshow(OUTPUT_HISTOGRAM_CDF_R_WINDOWS, outputImages.at(0));
     namedWindow(OUTPUT_HISTOGRAM_CDF_G_WINDOWS, 0);
     imshow(OUTPUT_HISTOGRAM_CDF_G_WINDOWS, outputImages.at(1));
     namedWindow(OUTPUT_HISTOGRAM_CDF_B_WINDOWS, 0);
     imshow(OUTPUT_HISTOGRAM_CDF_B_WINDOWS, outputImages.at(2));
+    namedWindow(OUTPUT_HISTOGRAM_R_WINDOWS, 0);
+    imshow(OUTPUT_HISTOGRAM_R_WINDOWS, outputImages.at(3));
+    namedWindow(OUTPUT_HISTOGRAM_G_WINDOWS, 0);
+    imshow(OUTPUT_HISTOGRAM_G_WINDOWS, outputImages.at(4));
+    namedWindow(OUTPUT_HISTOGRAM_B_WINDOWS, 0);
+    imshow(OUTPUT_HISTOGRAM_B_WINDOWS, outputImages.at(5));
 
     // Save the image
-    imwrite(OUTPUTIMAGE_CDF_PATH, outputImages.at(3));
+    imwrite(OUTPUTIMAGE_CDF_PATH, outputImages.at(6));
 
 #pragma endregion
 

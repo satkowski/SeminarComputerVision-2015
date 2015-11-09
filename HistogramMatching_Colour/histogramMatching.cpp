@@ -59,11 +59,63 @@ std::vector<Mat> histogramMatching_Seperate(Mat* inputImage1, Mat* inputImage2)
 {
 #pragma region Initialization
 
-
+    Mat imageSplit1[3], imageSplit2[3];
+    std::vector<Mat> imageMats1[3], imageMats2[3];
+    Mat cdf1[3], cdf2[3];
+    Mat lutChannel[3];
+    Mat cdfOutput = Mat(inputImage1->rows, inputImage1->cols, CV_8UC3);
 
 #pragma endregion
 
-    return std::vector<Mat>();
+#pragma region Get all data
+
+    split(*inputImage1, imageSplit1);
+    split(*inputImage2, imageSplit2);
+
+    for (int c = 0; c < 3; c++)
+    {
+        imageMats1[c] = calcCDFandPDF(&imageSplit1[c]);
+        imageMats2[c] = calcCDFandPDF(&imageSplit2[c]);
+        cdf1[c] = imageMats1[c].at(1);
+        cdf2[c] = imageMats2[c].at(1);
+        lutChannel[c] = Mat(cdf1[c].rows, 1, CV_8U);
+    }
+    
+#pragma endregion
+
+#pragma region Histogram matching
+
+    int oldC2[3] = { 0, 0, 0 };
+    for (int c1 = 0; c1 < cdf1[0].rows; c1++)
+        for (int channel = 0; channel < 3; channel++)
+            for (int c2 = oldC2[channel]; c2 < cdf2[channel].rows; c2++)
+            {
+                if (cdf1[channel].at<float>(c1) > cdf2[channel].at<float>(c2) && (c2 + 1) != cdf2[channel].rows)
+                    continue;
+                lutChannel[channel].at<uchar>(c1) = static_cast<uchar>(c2);
+                // Save old c2 because the value before were less
+                oldC2[channel] = c2;
+                break;
+            }
+
+#pragma endregion
+    
+#pragma region Calculate the output image
+
+    for (int cY = 0; cY < cdfOutput.rows; cY++)
+        for (int cX = 0; cX < cdfOutput.cols; cX++)
+        {
+            Vec3b pixel = inputImage1->at<Vec3b>(cY, cX);
+            cdfOutput.at<Vec3b>(cY, cX) = Vec3b{ lutChannel[0].at<uchar>(pixel.val[0]),
+                                                 lutChannel[1].at<uchar>(pixel.val[1]),
+                                                 lutChannel[2].at<uchar>(pixel.val[2]) };
+        }
+
+#pragma endregion
+
+    return std::vector<Mat> { imageMats1[0].at(3), imageMats1[1].at(3), imageMats1[2].at(3), 
+                              imageMats1[0].at(2), imageMats1[1].at(2), imageMats1[2].at(2), 
+                              cdfOutput };
 }
 
 std::vector<Mat> histogramMatching_Average(Mat* inputImage1, Mat* inputImage2)

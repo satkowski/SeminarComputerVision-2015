@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5053428B-7000-40BD-8DB9-68021AFA093C}</ProjectGuid>
-    <RootNamespace>HistogramMatchin_Gray</RootNamespace>
+    <ProjectGuid>{BAD42662-12E9-4AA5-BA20-7F7B66E028B6}</ProjectGuid>
+    <RootNamespace>HistogramMatching</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

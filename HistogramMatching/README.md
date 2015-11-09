@@ -1,7 +1,7 @@
 Histogram Matching
 =======================================
 
-Applies on an given image a histogram matching with another image. The images are in colour and there are 2 possibles ways to match them.
+Applies on an given image a histogram matching with another image. It can be gray and colour images. The colour images have 2 possibles ways to match them.
 
 Calling Arguments
 =================

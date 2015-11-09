@@ -68,10 +68,10 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
-    //Mat output;
-    //output = crossCorrelation(&inputImage1, &inputImage2);
-    //imshow(OUTPUTIMAGE_WINDOW, output);
-    //imwrite(OUTPUTIMAGE_PATH, output);
+    Mat output;
+    output = crossCorrelation(&inputImage1, &inputImage2);
+    imshow(OUTPUTIMAGE_WINDOW, output);
+    imwrite(OUTPUTIMAGE_PATH, output);
 
     waitKey();
     return 0;

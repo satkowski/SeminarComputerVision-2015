@@ -4,6 +4,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 // Find the cross correlation between two images
-cv::Mat crossCorrelation(cv::Mat* inputImage1, cv::Mat* inputImage2);
+cv::Mat crossCorrelation(cv::Mat* inputImage, cv::Mat* templateImage);
 
 #endif // CROSSCORRELATION_H

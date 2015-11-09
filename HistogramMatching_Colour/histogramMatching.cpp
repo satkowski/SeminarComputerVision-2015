@@ -55,13 +55,13 @@ std::vector<Mat> calcCDFandPDF(Mat* input)
     return std::vector<Mat> { pdf, cdf, pdfImage, cdfImage };
 }
 
-std::vector<Mat> histogramMatching_Seperate(Mat* inputImage1, Mat* inputImage2)
+std::vector<Mat> histogramMatching(Mat* inputImage1, Mat* inputImage2, bool seperate)
 {
 #pragma region Initialization
 
     Mat imageSplit1[3], imageSplit2[3];
     std::vector<Mat> imageMats1[3], imageMats2[3];
-    Mat cdf1[3], cdf2[3];
+    Mat cdf1[3], cdf2[4];
     Mat lutChannel[3];
     Mat cdfOutput = Mat(inputImage1->rows, inputImage1->cols, CV_8UC3);
 
@@ -80,6 +80,9 @@ std::vector<Mat> histogramMatching_Seperate(Mat* inputImage1, Mat* inputImage2)
         cdf2[c] = imageMats2[c].at(1);
         lutChannel[c] = Mat(cdf1[c].rows, 1, CV_8U);
     }
+
+    cdf2[3] = cdf2[0] + cdf2[1] + cdf2[2];
+    cdf2[3] /= 3;
     
 #pragma endregion
 
@@ -90,7 +93,8 @@ std::vector<Mat> histogramMatching_Seperate(Mat* inputImage1, Mat* inputImage2)
         for (int channel = 0; channel < 3; channel++)
             for (int c2 = oldC2[channel]; c2 < cdf2[channel].rows; c2++)
             {
-                if (cdf1[channel].at<float>(c1) > cdf2[channel].at<float>(c2) && (c2 + 1) != cdf2[channel].rows)
+                int cdf2Channel = seperate ? channel : 3;
+                if (cdf1[channel].at<float>(c1) > cdf2[cdf2Channel].at<float>(c2) && (c2 + 1) != cdf2[cdf2Channel].rows)
                     continue;
                 lutChannel[channel].at<uchar>(c1) = static_cast<uchar>(c2);
                 // Save old c2 because the value before were less
@@ -116,9 +120,4 @@ std::vector<Mat> histogramMatching_Seperate(Mat* inputImage1, Mat* inputImage2)
     return std::vector<Mat> { imageMats1[0].at(3), imageMats1[1].at(3), imageMats1[2].at(3), 
                               imageMats1[0].at(2), imageMats1[1].at(2), imageMats1[2].at(2), 
                               cdfOutput };
-}
-
-std::vector<Mat> histogramMatching_Average(Mat* inputImage1, Mat* inputImage2)
-{
-    return std::vector<Mat>();
 }

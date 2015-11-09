@@ -17,7 +17,7 @@ int main(int argc, const char** argv)
     CommandLineParser parser(argc, argv, keyMap);
     parser.about("Histogram Matching");
 
-    int colourMatching = parser.get<int>(ARGUMENT_COLOUR_LIST);
+    int colourMatching = parser.get<int>(ARGUMENT_COLOUR_STRING);
 
     // If help was in the list, the help list will printed
     if (parser.has(ARGUMENT_HELP_STRING))
@@ -56,11 +56,7 @@ int main(int argc, const char** argv)
 
 #pragma endregion
     
-    std::vector<Mat> outputImages;
-    if(colourMatching == 0)
-        outputImages = histogramMatching_Seperate(&inputImage1, &inputImage2);
-    else
-        outputImages = histogramMatching_Average(&inputImage1, &inputImage2);
+    std::vector<Mat> outputImages = histogramMatching(&inputImage1, &inputImage2, !colourMatching);
 
 #pragma region Setting the Windows
 

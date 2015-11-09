@@ -16,15 +16,12 @@
 #define INPUTIMAGE_1_WINDOW "InputImage 1"
 #define INPUTIMAGE_2_WINDOW "InputImage 2"
 #define OUTPUTIMAGE_CDF_WINDOW "OutputImageCDF"
-#define OUTPUT_HISTOGRAM_CDF_1_WINDOWS "CDF Histogram 1"
-#define OUTPUT_HISTOGRAM_CDF_2_WINDOWS "CDF Histogram 2"
+#define OUTPUT_HISTOGRAM_CDF_R_WINDOWS "CDF Histogram R"
+#define OUTPUT_HISTOGRAM_CDF_G_WINDOWS "CDF Histogram G"
+#define OUTPUT_HISTOGRAM_CDF_B_WINDOWS "CDF Histogram B"
 
 // Outputimage name and path
-#define OUTPUTIMAGE_CDF_NAME "outputImage_HistogrammMatch.jpg"
-#define OUTPUT_HISTOGRAM_CDF_1_NAME "outputImage_HistogrammCDF_1.jpg"
-#define OUTPUT_HISTOGRAM_CDF_2_NAME "outputImage_HistogrammCDF_2.jpg"
+#define OUTPUTIMAGE_CDF_NAME "outputImage_HistogrammMatch_Colour.jpg"
 #define OUTPUTIMAGE_CDF_PATH "../Bilder/Output/" OUTPUTIMAGE_CDF_NAME
-#define OUTPUT_HISTOGRAM_CDF_1_PATH "../Bilder/Output/" OUTPUT_HISTOGRAM_CDF_1_NAME
-#define OUTPUT_HISTOGRAM_CDF_2_PATH "../Bilder/Output/" OUTPUT_HISTOGRAM_CDF_2_NAME
 
 #endif // COMMONDEFINES_H

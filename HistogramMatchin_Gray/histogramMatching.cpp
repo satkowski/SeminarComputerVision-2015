@@ -76,6 +76,7 @@ std::vector<Mat> histogramMatching_OneChannel(Mat* inputImage1, Mat* inputImage2
 
 #pragma region Histogram matching
 
+    // Go over all values and compare them
     int oldC2 = 0;
     for (int c1 = 0; c1 < cdf1.rows; c1++)
         for (int c2 = oldC2; c2 < cdf2.rows; c2++)
@@ -102,15 +103,4 @@ std::vector<Mat> histogramMatching_OneChannel(Mat* inputImage1, Mat* inputImage2
 #pragma endregion
 
     return std::vector<Mat> { imageMats1.at(3), imageMats2.at(3), pdfOutput, cdfOutput};
-}
-
-std::vector<Mat> histogramMatching_ThreeChannel(Mat* inputImage1, Mat* inputImage2)
-{
-#pragma region Initialization
-
-
-
-#pragma endregion
-
-    return std::vector<Mat> {};
 }

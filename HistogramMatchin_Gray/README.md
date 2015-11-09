@@ -1,7 +1,7 @@
 Histogram Matching
 =======================================
 
-Applies on an given image a histogram matching with another image. It is decideable if both images are in colour or not.
+Applies on an given image a histogram matching with another image. The images are gray all the time.
 
 Calling Arguments
 =================
@@ -10,5 +10,3 @@ Calling Arguments
 -img1=[Path]
 
 -img2=[Path]
-
--colour

@@ -49,59 +49,47 @@ Mat crossCorrelation(Mat* inputImage, Mat* templateImage)
 
 #pragma region Non max suppression
 
-    //// First in the horizontal direction
-    //double zeroDouble = 0.0;
-    //double* actualMax = &zeroDouble;
-    //int actualMaxCounter = 0;
-    //for (int cY = 0; cY < output.rows; cY++)
-    //    for (int cX = 0; cX < output.cols; cX++)
-    //    {
-    //        // Is the new pixel outside the window, dont use it anymore
-    //        if (actualMaxCounter >= templateImage->cols / 1.5)
-    //        {
-    //            actualMax = &zeroDouble;
-    //            actualMaxCounter = 0;
-    //        }
-    //        // Is the new value greater than the max, reset all
-    //        if (actualMaxCounter == 0 ||
-    //            output.at<double>(cY, cX) > *actualMax)
-    //        {
-    //            *actualMax = 0.0;
-    //            actualMax = &output.at<double>(cY, cX);
-    //            actualMaxCounter = 0;
-    //        }
-    //        else
-    //            output.at<double>(cY, cX) = 0.0;
-    //        actualMaxCounter++;
-    //    }
+    Point range = Point(templateImage->cols / 1.5, templateImage->rows / 1.5);
+    int windowCounterX = 0;
+    double zeroDouble = 0.0;
+    double* actualMax = &zeroDouble;
+    for (int cY = 0; cY < output.rows - range.y; cY++)
+    {
+        // Where should the window in vertical direciton starts
+        int startY = cY - range.y + 1;
+        startY = startY < 0 ? 0 : startY;
 
-    //// Then in the vertical direction
-    //actualMax = &zeroDouble;
-    //actualMaxCounter = 0;
-    //for (int cX = 0; cX < output.cols; cX++)
-    //    for (int cY = 0; cY < output.rows; cY++)
-    //    {
-    //        // Is the new pixel outside the window, dont use it anymore
-    //        if (actualMaxCounter >= templateImage->cols / 1.5)
-    //        {
-    //            actualMax = &zeroDouble;
-    //            actualMaxCounter = 0;
-    //        }
-    //        // Is the new value greater than the max, reset all
-    //        if (actualMaxCounter == 0 ||
-    //            output.at<double>(cY, cX) > *actualMax)
-    //        {
-    //            *actualMax = 0.0;
-    //            actualMax = &output.at<double>(cY, cX);
-    //            actualMaxCounter = 0;
-    //        }
-    //        else
-    //            output.at<double>(cY, cX) = 0.0;
-    //        actualMaxCounter++;
-    //    }
+        for (int cX = 0; cX < output.cols - range.x; cX++)
+        {
+            // Is the new pixel outside the window, dont use it anymore
+            if (windowCounterX >= range.x)
+            {
+                actualMax = &zeroDouble;
+                windowCounterX = 0;
+            }            
+            // Look at the new column at the moved window
+            for (int wY = startY; wY <= cY; wY++)
+            {
+                // Is the new value greater than the max, reset all
+                if (windowCounterX == 0 ||
+                    output.at<double>(wY, cX) > *actualMax)
+                {
+                    *actualMax = 0.0;
+                    actualMax = &output.at<double>(wY, cX);
+                    windowCounterX = -1;
+                }
+                else
+                    output.at<double>(wY, cX) = 0.0;
+            }
+            // Increment for the windowdidth
+            if (windowCounterX == -1)
+                windowCounterX = 0;
+            windowCounterX++;
+        }
+        actualMax = &zeroDouble;
+    }
 
 #pragma endregion
         
-    output.convertTo(output, CV_8U);
     return output;
 }

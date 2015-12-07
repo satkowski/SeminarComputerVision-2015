@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HistogramMatching", "Histog
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HomographyImageTransformation", "HomographyImageTransformation\HomographyImageTransformation.vcxproj", "{78EA58F9-6850-4916-9441-A0500D6B2609}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Affine3DCamera", "Affine3DCamera\Affine3DCamera.vcxproj", "{E378EEEE-5DEE-4E95-819F-564FEA6891E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{78EA58F9-6850-4916-9441-A0500D6B2609}.Release|x64.Build.0 = Release|x64
 		{78EA58F9-6850-4916-9441-A0500D6B2609}.Release|x86.ActiveCfg = Release|Win32
 		{78EA58F9-6850-4916-9441-A0500D6B2609}.Release|x86.Build.0 = Release|Win32
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Debug|x64.ActiveCfg = Debug|x64
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Debug|x64.Build.0 = Debug|x64
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Debug|x86.ActiveCfg = Debug|Win32
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Debug|x86.Build.0 = Debug|Win32
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x64.ActiveCfg = Release|x64
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x64.Build.0 = Release|x64
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x86.ActiveCfg = Release|Win32
+		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

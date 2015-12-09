@@ -18,12 +18,18 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="calculations.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="commonDefines.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="calculations.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,10 +11,15 @@
 
 // Name of the Windows
 #define INPUTIMAGE_WINDOW "InputImage"
-#define AFFINECAMERA_WINDOW "AffineCamera"
+#define AFFINEIMAGE_WINDOW "AffineImage"
+#define CAMERA_WINDOW "Camera"
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage_AffineCameraTransformation.jpg"
 #define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
+
+
+#define ALPHA 100
+#define PI 3.14159265359
 
 #endif // COMMONDEFINES_H#

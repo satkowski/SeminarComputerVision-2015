@@ -21,5 +21,6 @@
 
 #define ALPHA 100
 #define PI 3.14159265359
+#define LAMBDA2 1
 
 #endif // COMMONDEFINES_H#

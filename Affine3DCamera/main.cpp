@@ -1,4 +1,4 @@
-//-img=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\flagge.jpg
+//-img=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\fruits.jpg
 #include "main.h"
 
 using namespace cv;
@@ -40,8 +40,8 @@ int main(int argc, const char** argv)
 
 #pragma region Initialize data
     
-    Vec3i sphereCoordinates = Vec3i(0, 0, 0);
-    Vec3i affineTransValues = Vec3i(0, 0, 0);
+    Vec3i sphereCoordinates = Vec3i(150, 0, 0);
+    Vec3i affineTransValues = Vec3i(0, 0, 1);
     Point3d cameraPosition = Point3d(0);
     Mat rotationMat, intrinsicCameraMat;
     std::vector<Point2f> sourceImagePoints, sourceImagePointsShift, cameraImagePoints;
@@ -54,22 +54,24 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
+    onTrackbarCam(0, &data);
+
 #pragma region Setting the windows
 
     namedWindow(INPUTIMAGE_WINDOW, 0);
     imshow(INPUTIMAGE_WINDOW, image);
+    namedWindow(CAMERA_WINDOW, 0);
+
+    //Adding the trackbars for the spherical coordinates
+    createTrackbar("radius", CAMERA_WINDOW, &(sphereCoordinates.val[0]), ALPHA * 15, onTrackbarCam, &data);
+    createTrackbar("theta ", CAMERA_WINDOW, &(sphereCoordinates.val[1]), 89, onTrackbarRotMat, &data);
+    createTrackbar("rho   ", CAMERA_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarRotMat, &data);
 
     namedWindow(AFFINEIMAGE_WINDOW, 0);
     //Adding the trackbars for the affine transformation
     createTrackbar("alpha", AFFINEIMAGE_WINDOW, &(affineTransValues.val[0]), 360, onTrackbarAff, &data);
     createTrackbar("beta ", AFFINEIMAGE_WINDOW, &(affineTransValues.val[1]), 360, onTrackbarAff, &data);
     createTrackbar("lamda", AFFINEIMAGE_WINDOW, &(affineTransValues.val[2]), 15, onTrackbarAff, &data);
-
-    namedWindow(CAMERA_WINDOW, 0);
-    //Adding the trackbars for the spherical coordinates
-    createTrackbar("radius", CAMERA_WINDOW, &(sphereCoordinates.val[0]), ALPHA * 15, onTrackbarCam, &data);
-    createTrackbar("theta ", CAMERA_WINDOW, &(sphereCoordinates.val[1]), 90, onTrackbarRotMat, &data);
-    createTrackbar("rho   ", CAMERA_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarRotMat, &data);
 
 #pragma endregion
 
@@ -79,8 +81,8 @@ int main(int argc, const char** argv)
 
 static void onTrackbarCam(int, void* userdata)
 {
-    Mat affineImage = calcAffineTransformation(userdata);
     Mat cameraImage = calcCameraImage(userdata);
+    Mat affineImage = calcAffineTransformation(userdata);
 
     imshow(AFFINEIMAGE_WINDOW, affineImage);
     imshow(CAMERA_WINDOW, cameraImage);

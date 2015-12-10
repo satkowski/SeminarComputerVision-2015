@@ -111,9 +111,9 @@ void mouseListener(int event, int x, int y, int, void* userdata)
     // If there are 4 point selected transform the image
     if (destinationPointVector->size() >= 4)
     {
-#pragma region Casting of the arguments 2
+#pragma region Casting of the arguments
 
-        Mat sourceImage = *static_cast<Mat*>(data->val[0]);
+        Mat* sourceImage = static_cast<Mat*>(data->val[0]);
         std::vector<Point2f>* sorucePointVector = static_cast<std::vector<Point2f>*>(data->val[2]);
 
 #pragma endregion
@@ -124,18 +124,18 @@ void mouseListener(int event, int x, int y, int, void* userdata)
         // Create homography and transform the source image
         Mat sourceWarped;
         Mat homography = findHomography(*sorucePointVector, *destinationPointVector);
-        warpPerspective(sourceImage, sourceWarped, homography, destinationImage.size());
+        warpPerspective(*sourceImage, sourceWarped, homography, destinationImage.size());
 
         // Creates an aquivalent gray image of the warped image, makes it binary and invert
         Mat gray, grayInv;
-        cvtColor(sourceImage, gray, CV_BGR2GRAY);
-        threshold(gray, gray, 0, 255, CV_THRESH_BINARY);
+        cvtColor(sourceWarped, gray, CV_BGR2GRAY);
+        threshold(gray, gray, 0, 256, CV_THRESH_BINARY);
         bitwise_not(gray, grayInv);
 
         // Copy only those pixel that got an 1 in the mask
         Mat destinationFinal, sourceFinal;
+        sourceWarped.copyTo(sourceFinal, gray);
         destinationImage.copyTo(destinationFinal, grayInv);
-        sourceImage.copyTo(sourceFinal, gray);
 
         // Combine the two images
         Mat finalImage = destinationFinal + sourceFinal;

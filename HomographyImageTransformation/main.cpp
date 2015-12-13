@@ -118,18 +118,25 @@ void mouseListener(int event, int x, int y, int, void* userdata)
 
 #pragma endregion
 
-        //Deactivate the mouselistener
+        // Create another image with changed values (+1) because the warped images black fuse with the free space black and would be filtered out
+        // from the treshold
+        Mat imageWithOffset;
+        sourceImage->copyTo(imageWithOffset);
+        imageWithOffset += Mat_<Vec3b>(imageWithOffset.rows, imageWithOffset.cols, Vec3b(1, 1, 1));
+
+        // Deactivate the mouselistener
         setMouseCallback(DESTINATIONIMAGE_WINDOW, NULL);
 
         // Create homography and transform the source image
-        Mat sourceWarped;
+        Mat imageWithOffsetWarped, sourceWarped;
         Mat homography = findHomography(*sorucePointVector, *destinationPointVector);
+        warpPerspective(imageWithOffset, imageWithOffsetWarped, homography, destinationImage.size());
         warpPerspective(*sourceImage, sourceWarped, homography, destinationImage.size());
 
         // Creates an aquivalent gray image of the warped image, makes it binary and invert
         Mat gray, grayInv;
-        cvtColor(sourceWarped, gray, CV_BGR2GRAY);
-        threshold(gray, gray, 0, 256, CV_THRESH_BINARY);
+        cvtColor(imageWithOffsetWarped, gray, CV_BGR2GRAY);
+        threshold(gray, gray, 0, 255, CV_THRESH_BINARY);
         bitwise_not(gray, grayInv);
 
         // Copy only those pixel that got an 1 in the mask

@@ -43,17 +43,20 @@ int main(int argc, const char** argv)
     Vec3i sphereCoordinates = Vec3i(150, 0, 0);
     Vec3i affineTransValues = Vec3i(0, 0, 1);
     Point3d cameraPosition = Point3d(0);
-    Mat rotationMat, intrinsicCameraMat;
+    Mat rotationMatCamera, rotationMatAffine, intrinsicCameraMat;
     std::vector<Point2f> sourceImagePoints, sourceImagePointsShift, cameraImagePoints;
 
-    Vec<void*, 9> data(&sphereCoordinates, &cameraPosition, &rotationMat, &affineTransValues,
-                       &sourceImagePoints, &sourceImagePointsShift, &cameraImagePoints,
-                       &intrinsicCameraMat,
-                       &image);
+    Vec<void*, 10> data(&sphereCoordinates, &affineTransValues, &cameraPosition, 
+                        &rotationMatCamera, &rotationMatAffine,
+                        &sourceImagePoints, &sourceImagePointsShift, &cameraImagePoints,
+                        &intrinsicCameraMat,
+                        &image);
+
     fillingUserdata(&data);
 
 #pragma endregion
 
+    calcRotationMatAffine(&data);
     onTrackbarCam(0, &data);
 
 #pragma region Setting the windows
@@ -90,6 +93,7 @@ static void onTrackbarCam(int, void* userdata)
 
 static void onTrackbarAff(int, void* userdata)
 {
+    calcRotationMatAffine(userdata);
     Mat affineImage = calcAffineTransformation(userdata);
 
     imshow(AFFINEIMAGE_WINDOW, affineImage);
@@ -97,7 +101,7 @@ static void onTrackbarAff(int, void* userdata)
 
 static void onTrackbarRotMat(int, void* userdata)
 {
-    calcRotationMat(userdata);
+    calcRotationMatCamera(userdata);
 
     onTrackbarCam(0, userdata);
 }

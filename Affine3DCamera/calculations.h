@@ -6,10 +6,13 @@
 
 #include "commonDefines.h"
 
-void calcRotationMat(void* userdata);
+// Calculate the roation matrix for the camera image
+void calcRotationMatCamera(void* userdata);
+// Calculate the roation matrix for the affine image
+void calcRotationMatAffine(void* userdata);
 
 // Fills the userdata vector
-void fillingUserdata(cv::Vec<void*, 9>* userdata);
+void fillingUserdata(cv::Vec<void*, 10>* userdata);
 // Method that calculate the image inside the camera
 cv::Mat calcCameraImage(void* userdata);
 // Method that calculate the camera position

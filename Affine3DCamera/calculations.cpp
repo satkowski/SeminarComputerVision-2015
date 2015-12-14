@@ -6,7 +6,6 @@ void fillingUserdata(Vec<void*, 10>* userdata)
 {
 #pragma region Casting of the data
 
-    Mat* rotationMatPtr = static_cast<Mat*>(userdata->val[3]);
     std::vector<Point2f>* sourceImagePointsPtr = static_cast<std::vector<Point2f>*>(userdata->val[5]);
     std::vector<Point2f>* sourceImagePointsShiftPtr = static_cast<std::vector<Point2f>*>(userdata->val[6]);
     Mat* intrinsicCameraMatPtr = static_cast<Mat*>(userdata->val[8]);
@@ -51,24 +50,14 @@ void fillingUserdata(Vec<void*, 10>* userdata)
     sourceImagePointsShift.push_back(Point2f(xNeg, yPos));
     sourceImagePointsShift.push_back(Point2f(xPos, yPos));
     sourceImagePointsShift.push_back(Point2f(0, 0));
-
-    // Filling the rotation matrix
-
-    Mat rotationMatX = (Mat_<double>(3, 3) <<
-                            1, 0, 0,
-                            0, cos(0), -sin(0),
-                            0, sin(0), cos(0));
-    Mat rotationMatY = (Mat_<double>(3, 3) <<
-                            cos(0), 0, sin(0),
-                            0, 1, 0,
-                            -sin(0), 0, cos(0));
-    Mat rotationMat = rotationMatX * rotationMatY;
+    
+    calcRotationMatCamera(userdata);
+    calcRotationMatAffine(userdata);
 
 #pragma endregion
 
 #pragma region Save all
 
-    *rotationMatPtr = rotationMat;
     *sourceImagePointsPtr = sourceImagePoints;
     *sourceImagePointsShiftPtr = sourceImagePointsShift;
     *intrinsicCameraMatPtr = intrinsicCameraMat;

@@ -56,7 +56,6 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
-    calcRotationMatAffine(&data);
     onTrackbarCam(0, &data);
 
 #pragma region Setting the windows

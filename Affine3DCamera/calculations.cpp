@@ -149,6 +149,8 @@ void calcRotationMatAffine(void* userdata)
 
 Mat calcCameraImage(void* userdata)
 {
+    calcRotationMatCamera(userdata);
+
 #pragma region Casting of the data
 
     Vec<void*, 10>* data = static_cast<Vec<void*, 10>*>(userdata);
@@ -219,35 +221,10 @@ Mat calcCameraImage(void* userdata)
     return sourceImageWarped;
 }
 
-void calcCameraPosition(void* userdata)
+void calcAffineTransformation(void* userdata)
 {
-#pragma region Casting of the data
+    calcRotationMatAffine(userdata);
 
-    Vec<void*, 10>* data = static_cast<Vec<void*, 10>*>(userdata);
-    Vec3i* sphereCoordinates = static_cast<Vec3i*>(data->val[0]);
-    Point3d* cameraPosition = static_cast<Point3d*>(data->val[2]);
-
-    double radius = sphereCoordinates->val[0];
-    double theta = sphereCoordinates->val[1] * PI / 180;
-    double rho = sphereCoordinates->val[2] * PI / 180;
-
-#pragma endregion
-    
-#pragma region Calculating the new camera position
-
-    //Calculate the coordinates on the x and y axis with the vector
-    cameraPosition->x = radius * sin(theta) * cos(rho);
-    cameraPosition->y = radius * sin(theta) * sin(rho);
-    cameraPosition->z = radius * cos(theta);
-
-    double t1 = cos(theta);
-    double t2 = cos(sphereCoordinates->val[1]);
-
-#pragma endregion
-}
-
-Mat calcAffineImage(void* userdata)
-{
 #pragma region Casting of the data
 
     Vec<void*, 10>* data = static_cast<Vec<void*, 10>*>(userdata);
@@ -260,7 +237,7 @@ Mat calcAffineImage(void* userdata)
     affineImagePoints->clear();
 
 #pragma endregion
-    
+
 #pragma region Calculate the new image points
 
     //Fill the point vector from the image
@@ -288,24 +265,32 @@ Mat calcAffineImage(void* userdata)
         affineImagePoints->push_back(Point2f(actualPoint.x, actualPoint.y));
     }
 
-    //Centering of the image
-    Point2f centerOffset = actualPoint - Point2f(255, 255);
-    for (int c = 0; c < destinationPoints.size(); c++)
-        destinationPoints.at(c) -= centerOffset;
-    actualPoint -= centerOffset;
+#pragma endregion
+}
+
+void calcCameraPosition(void* userdata)
+{
+#pragma region Casting of the data
+
+    Vec<void*, 10>* data = static_cast<Vec<void*, 10>*>(userdata);
+    Vec3i* sphereCoordinates = static_cast<Vec3i*>(data->val[0]);
+    Point3d* cameraPosition = static_cast<Point3d*>(data->val[2]);
+
+    double radius = sphereCoordinates->val[0];
+    double theta = sphereCoordinates->val[1] * PI / 180;
+    double rho = sphereCoordinates->val[2] * PI / 180;
 
 #pragma endregion
-
-#pragma region Transform the image
-
-    //Create homography
-    Mat homography = findHomography(*sourceImagePoints, destinationPoints, 0);
-
-    //Transform the source image
-    Mat sourceWarped;
-    warpPerspective(*image, sourceWarped, homography, Size(512, 512));
     
-#pragma endregion
+#pragma region Calculating the new camera position
 
-    return sourceWarped;
+    //Calculate the coordinates on the x and y axis with the vector
+    cameraPosition->x = radius * sin(theta) * cos(rho);
+    cameraPosition->y = radius * sin(theta) * sin(rho);
+    cameraPosition->z = radius * cos(theta);
+
+    double t1 = cos(theta);
+    double t2 = cos(sphereCoordinates->val[1]);
+
+#pragma endregion
 }

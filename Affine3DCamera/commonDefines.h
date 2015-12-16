@@ -11,8 +11,7 @@
 
 // Name of the Windows
 #define INPUTIMAGE_WINDOW "InputImage"
-#define AFFINEIMAGE_WINDOW "AffineImage"
-#define CAMERA_WINDOW "Camera"
+#define OUTPUT_WINDOW "Camera"
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage_AffineCameraTransformation.jpg"

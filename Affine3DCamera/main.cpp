@@ -62,18 +62,16 @@ int main(int argc, const char** argv)
 
     namedWindow(INPUTIMAGE_WINDOW, 0);
     imshow(INPUTIMAGE_WINDOW, image);
-    namedWindow(CAMERA_WINDOW, 0);
+    namedWindow(OUTPUT_WINDOW, 0);
 
     //Adding the trackbars for the spherical coordinates
-    createTrackbar("radius", CAMERA_WINDOW, &(sphereCoordinates.val[0]), ALPHA * 15, onTrackbarCam, &data);
-    createTrackbar("theta ", CAMERA_WINDOW, &(sphereCoordinates.val[1]), 89, onTrackbarCam, &data);
-    createTrackbar("rho   ", CAMERA_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarCam, &data);
-
-    namedWindow(AFFINEIMAGE_WINDOW, 0);
+    createTrackbar("radius", OUTPUT_WINDOW, &(sphereCoordinates.val[0]), ALPHA * 15, onTrackbarCam, &data);
+    createTrackbar("theta ", OUTPUT_WINDOW, &(sphereCoordinates.val[1]), 89, onTrackbarCam, &data);
+    createTrackbar("rho   ", OUTPUT_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarCam, &data);
     //Adding the trackbars for the affine transformation
-    createTrackbar("alpha", AFFINEIMAGE_WINDOW, &(affineTransValues.val[0]), 360, onTrackbarAff, &data);
-    createTrackbar("beta ", AFFINEIMAGE_WINDOW, &(affineTransValues.val[1]), 360, onTrackbarAff, &data);
-    createTrackbar("lamda", AFFINEIMAGE_WINDOW, &(affineTransValues.val[2]), 15, onTrackbarAff, &data);
+    createTrackbar("alpha", OUTPUT_WINDOW, &(affineTransValues.val[0]), 360, onTrackbarAff, &data);
+    createTrackbar("beta ", OUTPUT_WINDOW, &(affineTransValues.val[1]), 360, onTrackbarAff, &data);
+    createTrackbar("lamda", OUTPUT_WINDOW, &(affineTransValues.val[2]), 15, onTrackbarAff, &data);
 
 #pragma endregion
 
@@ -84,18 +82,15 @@ int main(int argc, const char** argv)
 static void onTrackbarCam(int, void* userdata)
 {
     calcCameraPosition(userdata);
-    calcRotationMatCamera(userdata);
-    Mat cameraImage = calcCameraImage(userdata);
+    Mat outputImage = calcCameraImage(userdata);
 
-    imshow(CAMERA_WINDOW, cameraImage);
+    imshow(OUTPUT_WINDOW, outputImage);
 }
 
 static void onTrackbarAff(int, void* userdata)
 {
-    calcRotationMatAffine(userdata);
-    Mat affineImage = calcAffineImage(userdata);
+    calcAffineTransformation(userdata);
     Mat cameraImage = calcCameraImage(userdata);
 
-    imshow(AFFINEIMAGE_WINDOW, affineImage);
-    imshow(CAMERA_WINDOW, cameraImage);
+    imshow(OUTPUT_WINDOW, cameraImage);
 }

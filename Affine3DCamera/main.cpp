@@ -85,12 +85,14 @@ static void onTrackbarCam(int, void* userdata)
     Mat outputImage = calcCameraImage(userdata);
 
     imshow(OUTPUT_WINDOW, outputImage);
+    imwrite(OUTPUTIMAGE_PATH, outputImage);
 }
 
 static void onTrackbarAff(int, void* userdata)
 {
     calcAffineTransformation(userdata);
-    Mat cameraImage = calcCameraImage(userdata);
+    Mat outputImage = calcCameraImage(userdata);
 
-    imshow(OUTPUT_WINDOW, cameraImage);
+    imshow(OUTPUT_WINDOW, outputImage);
+    imwrite(OUTPUTIMAGE_PATH, outputImage);
 }

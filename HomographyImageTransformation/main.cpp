@@ -144,6 +144,7 @@ void mouseListener(int event, int x, int y, int, void* userdata)
         // Combine the two images
         Mat finalImage = destinationFinal + sourceFinal;
         imshow(OUTPUTIMAGE_WINDOW, finalImage);
+        imwrite(OUTPUTIMAGE_PATH, finalImage);
     }
 
 #pragma endregion

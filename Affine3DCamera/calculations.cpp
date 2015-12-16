@@ -83,20 +83,21 @@ void calcRotationMatCamera(void* userdata)
     cameraToSource = normalize(cameraToSource);
     Vec3d cameraLookingDirection = Vec3d(0, 0, -1);
 
-    Vec3d crossProduct = cameraToSource.cross(cameraLookingDirection);
+    Vec3d crossProduct = cameraLookingDirection.cross(cameraToSource);
     double crossProductLength = norm(crossProduct);
-    double dotProduct = cameraToSource.dot(cameraLookingDirection);
+    double dotProduct = cameraLookingDirection.dot(cameraToSource);
+    double angle = acos(dotProduct);
 
     Mat identy = (Mat_<double>(3, 3) <<
         1, 0, 0, 0, 1, 0, 0, 0, 1);
-    Mat vx = (Mat_<double>(3, 3) <<
+    Mat vRotation = (Mat_<double>(3, 3) <<
         0, -crossProduct.val[2], crossProduct.val[1],
         crossProduct.val[2], 0, -crossProduct.val[0],
         -crossProduct.val[1], crossProduct.val[0], 0);
 
     Mat newRotationMat;
     if (crossProductLength != 0)
-        newRotationMat = identy + vx + (vx * vx * (1 - dotProduct) / crossProductLength * crossProductLength);
+        newRotationMat = identy + sin(angle) * vRotation + (1 - cos(angle)) * vRotation * vRotation;
     else
         newRotationMat = identy;
 

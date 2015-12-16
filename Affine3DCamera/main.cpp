@@ -44,11 +44,11 @@ int main(int argc, const char** argv)
     Vec3i affineTransValues = Vec3i(0, 0, 1);
     Point3d cameraPosition = Point3d(0);
     Mat rotationMatCamera, rotationMatAffine, intrinsicCameraMat;
-    std::vector<Point2f> sourceImagePoints, sourceImagePointsShift, cameraImagePoints;
+    std::vector<Point2f> sourceImagePoints, sourceImagePointsShift, affineImagePoints;
 
     Vec<void*, 10> data(&sphereCoordinates, &affineTransValues, &cameraPosition, 
                         &rotationMatCamera, &rotationMatAffine,
-                        &sourceImagePoints, &sourceImagePointsShift, &cameraImagePoints,
+                        &sourceImagePoints, &sourceImagePointsShift, &affineImagePoints,
                         &intrinsicCameraMat,
                         &image);
 
@@ -56,7 +56,7 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
-    onTrackbarCam(0, &data);
+    onTrackbarAff(0, &data);
 
 #pragma region Setting the windows
 
@@ -66,8 +66,8 @@ int main(int argc, const char** argv)
 
     //Adding the trackbars for the spherical coordinates
     createTrackbar("radius", CAMERA_WINDOW, &(sphereCoordinates.val[0]), ALPHA * 15, onTrackbarCam, &data);
-    createTrackbar("theta ", CAMERA_WINDOW, &(sphereCoordinates.val[1]), 89, onTrackbarRotMat, &data);
-    createTrackbar("rho   ", CAMERA_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarRotMat, &data);
+    createTrackbar("theta ", CAMERA_WINDOW, &(sphereCoordinates.val[1]), 89, onTrackbarCam, &data);
+    createTrackbar("rho   ", CAMERA_WINDOW, &(sphereCoordinates.val[2]), 360, onTrackbarCam, &data);
 
     namedWindow(AFFINEIMAGE_WINDOW, 0);
     //Adding the trackbars for the affine transformation
@@ -83,24 +83,19 @@ int main(int argc, const char** argv)
 
 static void onTrackbarCam(int, void* userdata)
 {
+    calcCameraPosition(userdata);
+    calcRotationMatCamera(userdata);
     Mat cameraImage = calcCameraImage(userdata);
-    Mat affineImage = calcAffineTransformation(userdata);
 
-    imshow(AFFINEIMAGE_WINDOW, affineImage);
     imshow(CAMERA_WINDOW, cameraImage);
 }
 
 static void onTrackbarAff(int, void* userdata)
 {
     calcRotationMatAffine(userdata);
-    Mat affineImage = calcAffineTransformation(userdata);
+    Mat affineImage = calcAffineImage(userdata);
+    Mat cameraImage = calcCameraImage(userdata);
 
     imshow(AFFINEIMAGE_WINDOW, affineImage);
-}
-
-static void onTrackbarRotMat(int, void* userdata)
-{
-    calcRotationMatCamera(userdata);
-
-    onTrackbarCam(0, userdata);
+    imshow(CAMERA_WINDOW, cameraImage);
 }

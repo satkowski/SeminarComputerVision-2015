@@ -18,6 +18,6 @@ cv::Mat calcCameraImage(void* userdata);
 // Method that calculate the camera position
 void calcCameraPosition(void* userdata);
 // Method that calculate the affine transformation
-cv::Mat calcAffineTransformation(void* userdata);
+cv::Mat calcAffineImage(void* userdata);
 
 #endif // CALCULATIONS_H

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Superpixels", "Superpixels\Superpixels.vcxproj", "{EE20A3C2-052F-45C4-BBEA-C52046CCD454}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HomographyImageTransformation", "HomographyImageTransformation\HomographyImageTransformation.vcxproj", "{78EA58F9-6850-4916-9441-A0500D6B2609}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Affine3DCamera", "Affine3DCamera\Affine3DCamera.vcxproj", "{E378EEEE-5DEE-4E95-819F-564FEA6891E5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StereoMatching_Disparity", "StereoMatching_Disparity\StereoMatching_Disparity.vcxproj", "{6FC73F1B-4358-47BB-B551-655E298560DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,14 @@ Global
 		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x64.Build.0 = Release|x64
 		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x86.ActiveCfg = Release|Win32
 		{E378EEEE-5DEE-4E95-819F-564FEA6891E5}.Release|x86.Build.0 = Release|Win32
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Debug|x64.ActiveCfg = Debug|x64
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Debug|x64.Build.0 = Debug|x64
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Debug|x86.ActiveCfg = Debug|Win32
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Debug|x86.Build.0 = Debug|Win32
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Release|x64.ActiveCfg = Release|x64
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Release|x64.Build.0 = Release|x64
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Release|x86.ActiveCfg = Release|Win32
+		{6FC73F1B-4358-47BB-B551-655E298560DE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

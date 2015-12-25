@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "commonDefines.h"
+#include "stereoMatching.h"
 
 #include "opencv2/highgui/highgui.hpp"
 

@@ -16,7 +16,7 @@ int main(int argc, const char** argv)
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
-    parser.about("AffineCamera");
+    parser.about("StereoMatching-DisparityCalculation");
 
     // If help was in the list, the help list will printed
     if (parser.has(ARGUMENT_HELP_STRING))
@@ -56,19 +56,8 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
-#pragma region Initialize data
-
-    Vec3i sphereCoordinates = Vec3i(150, 0, 0);
-    Vec3i affineTransValues = Vec3i(0, 0, 1);
-    Point3d cameraPosition = Point3d(0);
-    Mat rotationMatCamera, rotationMatAffine, intrinsicCameraMat;
-    std::vector<Point2f> sourceImagePoints, sourceImagePointsShift, affineImagePoints;
-
     Vec<void*, 4> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria);
-
-#pragma endregion
-
-    Mat outputImage;
+    Mat outputImage = calcDisparity(&data);
 
 #pragma region Setting the windows
 
@@ -77,8 +66,7 @@ int main(int argc, const char** argv)
     namedWindow(RIGHTIMAGE_WINDOW, 0);
     imshow(RIGHTIMAGE_WINDOW, rightImage);
     namedWindow(OUTPUTIMAGE_NAME, 0);
-    //imshow(OUTPUTIMAGE_NAME, outputImage);
-
+    imshow(OUTPUTIMAGE_NAME, outputImage);
 
 #pragma endregion
 

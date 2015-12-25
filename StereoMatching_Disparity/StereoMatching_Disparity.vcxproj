@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="stereoMatching.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commonDefines.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="stereoMatching.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6FC73F1B-4358-47BB-B551-655E298560DE}</ProjectGuid>

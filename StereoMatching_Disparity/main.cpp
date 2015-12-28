@@ -70,6 +70,8 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
+    imwrite(OUTPUTIMAGE_PATH, outputImage);
+
     waitKey();
     return 0;
 }

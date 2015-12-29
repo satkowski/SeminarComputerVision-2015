@@ -61,7 +61,7 @@ Mat calcDisparity(Vec<void*, 4>* userdata)
             else if (matchingCriteria == 2)
                 selectedLoc = maxLoc;
 
-            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = std::abs(cX - selectedLoc.x);
+            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = cX - selectedLoc.x;
 
 #pragma endregion
 
@@ -104,8 +104,9 @@ Mat absoulteSumDifference(Mat image, Mat templateImage)
         {
             Mat imageTemplatePart = Mat(image, templateRect);
             // Calculate the absolute difference of the two images and the sum
-            absdiff(imageTemplatePart, templateImage, imageTemplatePart);
-            Scalar sumScalar = sum(imageTemplatePart);
+            Mat absoluteSum;
+            absdiff(imageTemplatePart, templateImage, absoluteSum);
+            Scalar sumScalar = sum(absoluteSum);
 
             float totalSum = 0.0f;
             if (image.type() == CV_32F)

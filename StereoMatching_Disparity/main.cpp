@@ -12,7 +12,8 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_LEFTIMAGE_LIST " |   | left soruce image path}"
                           "{" ARGUMENT_RIGHTIMAGE_LIST " |   | right soruce image path}"
                           "{" ARGUMENT_MATCHINGCRITERITA_LIST " | 0 | matching criteria:\n 0 - SSD\n 1 - ASD\n 2 - Cross Correlation}"
-                          "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch}";
+                          "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch}"
+                          "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}";
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
@@ -53,11 +54,27 @@ int main(int argc, const char** argv)
     
     int matchingCriteria = parser.get<int>(ARGUMENT_MATCHINGCRITERITA_STRING);
     int blockRadius = parser.get<int>(ARGUMENT_BLOCKSIZE_STRING);
+    bool postProc = parser.has(ARGUMENT_POSTPROCESSING_STRING);
 
 #pragma endregion
 
     Vec<void*, 4> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria);
     Mat outputImage = calcDisparity(&data);
+
+#pragma region Post processing
+
+    Mat outputImageSwitched;
+    if (postProc)
+    {
+        data.val[0] = &rightImage;
+        data.val[1] = &leftImage;
+
+        outputImageSwitched = calcDisparity(&data);
+
+        postProccesing(&outputImage, &outputImageSwitched);
+    }
+
+#pragma endregion
 
 #pragma region Setting the windows
 
@@ -65,8 +82,13 @@ int main(int argc, const char** argv)
     imshow(LEFTIMAGE_WINDOW, leftImage);
     namedWindow(RIGHTIMAGE_WINDOW, 0);
     imshow(RIGHTIMAGE_WINDOW, rightImage);
-    namedWindow(OUTPUTIMAGE_NAME, 0);
-    imshow(OUTPUTIMAGE_NAME, outputImage);
+    namedWindow(OUTPUTNORMAL_WINDOW, 0);
+    imshow(OUTPUTNORMAL_WINDOW, outputImage);
+    if (postProc)
+    {
+        namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
+        imshow(OUTPUTNORMALSWITCHED_WINDOW, outputImageSwitched);
+    }
 
 #pragma endregion
 

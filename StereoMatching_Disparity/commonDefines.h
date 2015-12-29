@@ -7,6 +7,7 @@
 #define ARGUMENT_RIGHTIMAGE_STRING "r"
 #define ARGUMENT_MATCHINGCRITERITA_STRING "m"
 #define ARGUMENT_BLOCKSIZE_STRING "bs"
+#define ARGUMENT_POSTPROCESSING_STRING "pp"
 
 // The list of values that can activate certain things
 #define ARGUMENT_HELP_LIST ARGUMENT_HELP_STRING " h usage ?"
@@ -14,11 +15,13 @@
 #define ARGUMENT_RIGHTIMAGE_LIST ARGUMENT_RIGHTIMAGE_STRING " right imgR imageRight"
 #define ARGUMENT_MATCHINGCRITERITA_LIST ARGUMENT_MATCHINGCRITERITA_STRING " match"
 #define ARGUMENT_BLOCKSIZE_LIST ARGUMENT_BLOCKSIZE_STRING " blockS size blockSize"
+#define ARGUMENT_POSTPROCESSING_LIST ARGUMENT_POSTPROCESSING_STRING " postP"
 
 // Name of the Windows
 #define LEFTIMAGE_WINDOW "LeftImage"
 #define RIGHTIMAGE_WINDOW "RightImage"
-#define OUTPUT_WINDOW "Disparity"
+#define OUTPUTNORMAL_WINDOW "Disparity"
+#define OUTPUTNORMALSWITCHED_WINDOW "DisparitySwitched"
 
 // Outputimage name and path
 #define OUTPUTIMAGE_NAME "outputImage_StereoMatching_Disparity.jpg"

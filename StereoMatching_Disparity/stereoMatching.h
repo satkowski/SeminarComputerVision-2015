@@ -1,5 +1,5 @@
-#ifndef STEREO_MATCHING
-#define STEREO_MATCHING
+#ifndef STEREO_MATCHING_H
+#define STEREO_MATCHING_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 
@@ -10,4 +10,4 @@ cv::Mat calcDisparity(cv::Vec<void*, 4>* userdata);
 // Calculate the absolute sum of difference from an template in an image
 cv::Mat absoulteSumDifference(cv::Mat image, cv::Mat templateImage);
 
-#endif // STEREO_MATCHING
+#endif // STEREO_MATCHING_H

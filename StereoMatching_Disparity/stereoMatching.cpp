@@ -79,24 +79,47 @@ Mat calcDisparity(Vec<void*, 4>* userdata)
 
 Mat absoulteSumDifference(Mat image, Mat templateImage)
 {
+#pragma region Image convertion
+
+    if (image.type() == CV_8U)
+    {
+        image.convertTo(image, CV_32F);
+        templateImage.convertTo(templateImage, CV_32F);
+    }
+    else if (image.type() == CV_8UC3)
+    {
+        image.convertTo(image, CV_32FC3);
+        templateImage.convertTo(templateImage, CV_32F);
+    }
+
+#pragma endregion
+
     Mat output = Mat(image.rows - templateImage.rows + 1, image.cols - templateImage.cols + 1, CV_32F);
+
+    Rect templateRect = Rect(0, 0, templateImage.cols, templateImage.rows);
     // Go through all pixels in the image
-    for (int iY = 0; iY < output.rows; iY++)
-        for (int iX = 0; iX < output.cols; iX++)
+    for (int cY = 0; cY < output.rows; cY++)
+    {
+        for (int cX = 0; cX < output.cols; cX++)
         {
-            output.at<float>(iY, iX) = 0;
-            // Go through all pixels in the template
-            for (int tY = 0; tY < templateImage.rows; tY++)
-                for (int tX = 0; tX < templateImage.cols; tX++)
-                {
-                    // Decide if the image is in color or in grey
-                    if (image.type() == CV_8U)
-                        output.at<float>(iY, iX) += std::abs((float)image.at<uchar>(iY + tY, iX + tX) - (float)templateImage.at<uchar>(tY, tX));
-                    else if (image.type() == CV_8UC3)
-                        for (int c = 0; c < 3; c++)
-                            output.at<float>(iY, iX) += std::abs((float)image.at<Vec3b>(iY + tY, iX + tX).val[c] - (float)templateImage.at<Vec3b>(tY, tX).val[c]);
-                }
+            Mat imageTemplatePart = Mat(image, templateRect);
+            // Calculate the absolute difference of the two images and the sum
+            absdiff(imageTemplatePart, templateImage, imageTemplatePart);
+            Scalar sumScalar = sum(imageTemplatePart);
+
+            float totalSum = 0.0f;
+            if (image.type() == CV_32F)
+                totalSum += sumScalar.val[0];
+            else if (image.type() == CV_32FC3)
+                for (int c = 0; c < 3; c++)
+                    totalSum += sumScalar.val[c];
+
+            output.at<float>(cY, cX) = totalSum;
+
+            templateRect.x++;
         }
+        templateRect.y++;
+    }
 
     return output;
 }

@@ -2,7 +2,7 @@
 
 using namespace cv;
 
-std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
+Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 {
 #pragma region Casting of the data
 
@@ -16,6 +16,7 @@ std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 
 #pragma region Calculate the disparity
 
+    int offset = firstImageLeft ? -1 : 1;
     // Only use the line of the leftImage and the template of the right image
     Rect block = Rect(0, 0, 1 + 2 * blockRadius, 1 + 2 * blockRadius);
     Rect line = Rect(0, 0, 0, 1 + 2 * blockRadius);
@@ -23,7 +24,6 @@ std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
     int maxLineLength = maxDisparity * 2 + 1 + blockRadius * 2;
     int maxLineX = secondImage->cols - maxLineLength - 1;
 
-    int maxNegativValue = 0;
     Mat outputImage = Mat(secondImage->rows - 2 * blockRadius, secondImage->cols - 2 * blockRadius, CV_32S);
     for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
     {
@@ -70,10 +70,7 @@ std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
             else if (matchingCriteria == 2)
                 selectedLoc = maxLoc;
 
-            int newValue = (line.x - (cX - blockRadius)) + selectedLoc.x;
-            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = newValue;
-            if (newValue < maxNegativValue)
-                maxNegativValue = newValue;
+            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = offset * ((line.x - (cX - blockRadius)) + selectedLoc.x);
 
 #pragma endregion
 
@@ -105,7 +102,7 @@ std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 
 #pragma endregion
 
-    return std::pair<Mat, int> (outputImage, maxNegativValue);
+    return outputImage;
 }
 
 Mat absoulteSumDifference(Mat image, Mat templateImage)

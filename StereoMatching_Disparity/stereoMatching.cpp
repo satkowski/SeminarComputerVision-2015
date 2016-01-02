@@ -2,7 +2,7 @@
 
 using namespace cv;
 
-Mat calcDisparity(Vec<void*, 4>* userdata, bool firstImageLeft)
+Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 {
 #pragma region Casting of the data
 
@@ -10,6 +10,7 @@ Mat calcDisparity(Vec<void*, 4>* userdata, bool firstImageLeft)
     Mat* secondImage = static_cast<Mat*>(userdata->val[1]);
     int blockRadius = *static_cast<int*>(userdata->val[2]);
     int matchingCriteria = *static_cast<int*>(userdata->val[3]);
+    int maxDisparity = *static_cast<int*>(userdata->val[4]);
 
 #pragma endregion
 

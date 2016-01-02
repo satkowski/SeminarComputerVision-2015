@@ -13,6 +13,7 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_RIGHTIMAGE_LIST " |   | right soruce image path}"
                           "{" ARGUMENT_MATCHINGCRITERITA_LIST " | 0 | matching criteria:\n 0 - SSD\n 1 - ASD\n 2 - Cross Correlation}"
                           "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch}"
+                          "{" ARGUMENT_MAXDISPARITY_LIST " | 8 | maximum disparity of a pixel}"
                           "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}";
 
     // Reading the calling arguments
@@ -53,12 +54,28 @@ int main(int argc, const char** argv)
     }
     
     int matchingCriteria = parser.get<int>(ARGUMENT_MATCHINGCRITERITA_STRING);
+    if (0 > matchingCriteria || matchingCriteria > 2)
+    {
+        printf("No matchingcriteria with the number %d\n", matchingCriteria);
+        return -1;
+    }
     int blockRadius = parser.get<int>(ARGUMENT_BLOCKSIZE_STRING);
+    if (blockRadius <= 0)
+    {
+        printf("The block radius cannot be negativ. Yours is %d\n", blockRadius);
+        return -1;
+    }
+    int maxDisparity = parser.get<int>(ARGUMENT_MAXDISPARITY_STRING);
+    if (maxDisparity <= 0)
+    {
+        printf("The max disparity cannot be negativ. Yours is %d\n", blockRadius);
+        return -1;        
+    }
     bool postProc = parser.has(ARGUMENT_POSTPROCESSING_STRING);
 
 #pragma endregion
 
-    Vec<void*, 4> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria);
+    Vec<void*, 5> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria, &maxDisparity);
     Mat outputImage = calcDisparity(&data, true);
 
 #pragma region Post processing

@@ -13,7 +13,9 @@ Calling Arguments
 
 -match=[0-2]
 
--blockS=[int]
+-blockS=[uint]
+
+-maxD=[uint]
 
 -postP
 

@@ -2,12 +2,12 @@
 
 using namespace cv;
 
-Mat calcDisparity(Vec<void*, 4>* userdata)
+Mat calcDisparity(Vec<void*, 4>* userdata, bool firstImageLeft)
 {
 #pragma region Casting of the data
 
-    Mat* leftImage = static_cast<Mat*>(userdata->val[0]);
-    Mat* rightImage = static_cast<Mat*>(userdata->val[1]);
+    Mat* firstImage = static_cast<Mat*>(userdata->val[0]);
+    Mat* secondImage = static_cast<Mat*>(userdata->val[1]);
     int blockRadius = *static_cast<int*>(userdata->val[2]);
     int matchingCriteria = *static_cast<int*>(userdata->val[3]);
 
@@ -17,19 +17,19 @@ Mat calcDisparity(Vec<void*, 4>* userdata)
 
     // Only use the line of the leftImage and the template of the right image
     Rect block = Rect(0, 0, 1 + 2 * blockRadius, 1 + 2 * blockRadius);
-    Rect line = Rect(0, 0, rightImage->cols, 1 + 2 * blockRadius);
+    Rect line = Rect(0, 0, secondImage->cols, 1 + 2 * blockRadius);
 
-    Mat outputImage = Mat(rightImage->rows - 2 * blockRadius, rightImage->cols - 2 * blockRadius, CV_32S);
-    for (int cY = blockRadius; cY < leftImage->rows - blockRadius; cY++)
+    Mat outputImage = Mat(secondImage->rows - 2 * blockRadius, secondImage->cols - 2 * blockRadius, CV_32S);
+    for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
     {
         // Reset the block
         block = Rect(0, block.y, 1 + 2 * blockRadius, block.height);
 
-        for (int cX = blockRadius; cX < leftImage->cols - blockRadius; cX++)
+        for (int cX = blockRadius; cX < firstImage->cols - blockRadius; cX++)
         {
             // Create the line and the block image
-            Mat templateFirstI = Mat(*leftImage, block);
-            Mat lineSecondI = Mat(*rightImage, line);
+            Mat templateFirstI = Mat(*firstImage, block);
+            Mat lineSecondI = Mat(*secondImage, line);
 
 #pragma region Decide the method
 
@@ -73,7 +73,6 @@ Mat calcDisparity(Vec<void*, 4>* userdata)
 
 #pragma endregion
 
-    outputImage.convertTo(outputImage, CV_8U);
     return outputImage;
 }
 

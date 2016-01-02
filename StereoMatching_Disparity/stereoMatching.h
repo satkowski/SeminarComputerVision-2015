@@ -6,7 +6,7 @@
 #include <cstdlib>
 
 // Calculate the disparity of 2 stereo images
-cv::Mat calcDisparity(cv::Vec<void*, 4>* userdata);
+cv::Mat calcDisparity(cv::Vec<void*, 4>* userdata, bool firstImageLeft);
 // Calculate the absolute sum of difference from an template in an image
 cv::Mat absoulteSumDifference(cv::Mat image, cv::Mat templateImage);
 

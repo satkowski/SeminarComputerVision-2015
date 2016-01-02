@@ -59,7 +59,7 @@ int main(int argc, const char** argv)
 #pragma endregion
 
     Vec<void*, 4> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria);
-    Mat outputImage = calcDisparity(&data);
+    Mat outputImage = calcDisparity(&data, true);
 
 #pragma region Post processing
 
@@ -69,10 +69,12 @@ int main(int argc, const char** argv)
         data.val[0] = &rightImage;
         data.val[1] = &leftImage;
 
-        outputImageSwitched = calcDisparity(&data);
+        outputImageSwitched = calcDisparity(&data, false);
 
         postProccesing(&outputImage, &outputImageSwitched);
+        outputImageSwitched.convertTo(outputImageSwitched, CV_8U);
     }
+    outputImage.convertTo(outputImage, CV_8U);
 
 #pragma endregion
 
@@ -88,11 +90,12 @@ int main(int argc, const char** argv)
     {
         namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
         imshow(OUTPUTNORMALSWITCHED_WINDOW, outputImageSwitched);
+        imwrite(OUTPUTIMAGESWITCHED_PATH, outputImage);
     }
 
 #pragma endregion
 
-    imwrite(OUTPUTIMAGE_PATH, outputImage);
+    imwrite(OUTPUTIMAGENORMAL_PATH, outputImage);
 
     waitKey();
     return 0;

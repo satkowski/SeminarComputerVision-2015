@@ -24,7 +24,12 @@
 #define OUTPUTNORMALSWITCHED_WINDOW "DisparitySwitched"
 
 // Outputimage name and path
-#define OUTPUTIMAGE_NAME "outputImage_StereoMatching_Disparity.jpg"
-#define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
+#define OUTPUTIMAGENORMALE_NAME "outputImage_StereoMatching_Disparity.jpg"
+#define OUTPUTIMAGENORMAL_PATH "../Bilder/Output/" OUTPUTIMAGENORMALE_NAME
+#define OUTPUTIMAGESWITCHED_NAME "outputImage_StereoMatching_Disparity.jpg"
+#define OUTPUTIMAGESWITCHED_PATH "../Bilder/Output/" OUTPUTIMAGESWITCHED_NAME
+
+// Postprocessing variables
+#define MEDIANSIZE 4
 
 #endif // COMMONDEFINES_H#

@@ -76,11 +76,11 @@ int main(int argc, const char** argv)
 #pragma endregion
 
     Vec<void*, 5> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria, &maxDisparity);
-    Mat outputImage = calcDisparity(&data, true);
+    std::pair<Mat, int> outputImage = calcDisparity(&data, true);
 
 #pragma region Post processing
 
-    Mat outputImageSwitched;
+    std::pair<Mat, int> outputImageSwitched;
     if (postProc)
     {
         data.val[0] = &rightImage;
@@ -88,10 +88,17 @@ int main(int argc, const char** argv)
 
         outputImageSwitched = calcDisparity(&data, false);
 
-        postProccesing(&outputImage, &outputImageSwitched);
-        outputImageSwitched.convertTo(outputImageSwitched, CV_8U);
+        postProccesing(&outputImage.first, &outputImageSwitched.first);
+
+        for (int cY = 0; cY < outputImageSwitched.first.rows; cY++)
+            for (int cX = 0; cX < outputImageSwitched.first.cols; cX++)
+                outputImageSwitched.first.at<int>(cY, cX) -= outputImageSwitched.second;
+        outputImageSwitched.first.convertTo(outputImageSwitched.first, CV_8U);
     }
-    outputImage.convertTo(outputImage, CV_8U);
+    for (int cY = 0; cY < outputImage.first.rows; cY++)
+        for (int cX = 0; cX < outputImage.first.cols; cX++)
+            outputImage.first.at<int>(cY, cX) -= outputImage.second;
+    outputImage.first.convertTo(outputImage.first, CV_8U);
 
 #pragma endregion
 
@@ -102,17 +109,17 @@ int main(int argc, const char** argv)
     namedWindow(RIGHTIMAGE_WINDOW, 0);
     imshow(RIGHTIMAGE_WINDOW, rightImage);
     namedWindow(OUTPUTNORMAL_WINDOW, 0);
-    imshow(OUTPUTNORMAL_WINDOW, outputImage);
+    imshow(OUTPUTNORMAL_WINDOW, outputImage.first);
     if (postProc)
     {
         namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
-        imshow(OUTPUTNORMALSWITCHED_WINDOW, outputImageSwitched);
-        imwrite(OUTPUTIMAGESWITCHED_PATH, outputImage);
+        imshow(OUTPUTNORMALSWITCHED_WINDOW, outputImageSwitched.first);
+        imwrite(OUTPUTIMAGESWITCHED_PATH, outputImageSwitched.first);
     }
 
 #pragma endregion
 
-    imwrite(OUTPUTIMAGENORMAL_PATH, outputImage);
+    imwrite(OUTPUTIMAGENORMAL_PATH, outputImage.first);
 
     waitKey();
     return 0;

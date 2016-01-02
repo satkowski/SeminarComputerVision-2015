@@ -2,7 +2,7 @@
 
 using namespace cv;
 
-Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
+std::pair<Mat, int> calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 {
 #pragma region Casting of the data
 
@@ -18,13 +18,21 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 
     // Only use the line of the leftImage and the template of the right image
     Rect block = Rect(0, 0, 1 + 2 * blockRadius, 1 + 2 * blockRadius);
-    Rect line = Rect(0, 0, secondImage->cols, 1 + 2 * blockRadius);
+    Rect line = Rect(0, 0, 0, 1 + 2 * blockRadius);
+    // The maximal length of the row and the highest possible x value with full length row
+    int maxLineLength = maxDisparity * 2 + 1 + blockRadius * 2;
+    int maxLineX = secondImage->cols - maxLineLength - 1;
 
+    int maxNegativValue = 0;
     Mat outputImage = Mat(secondImage->rows - 2 * blockRadius, secondImage->cols - 2 * blockRadius, CV_32S);
     for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
     {
-        // Reset the block
+        // Reset the rectangles
         block = Rect(0, block.y, 1 + 2 * blockRadius, block.height);
+        if(blockRadius * 2 + 1 + maxDisparity > secondImage->cols)
+            line = Rect(0, line.y, secondImage->cols, line.height);
+        else
+            line = Rect(0, line.y, blockRadius * 2 + 1 + maxDisparity, line.height);
 
         for (int cX = blockRadius; cX < firstImage->cols - blockRadius; cX++)
         {
@@ -62,11 +70,34 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
             else if (matchingCriteria == 2)
                 selectedLoc = maxLoc;
 
-            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = cX - selectedLoc.x;
+            int newValue = (line.x - (cX - blockRadius)) + selectedLoc.x;
+            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = newValue;
+            if (newValue < maxNegativValue)
+                maxNegativValue = newValue;
 
 #pragma endregion
 
             block.x++;
+            
+            // Increment the width till the widht is the max length.
+            // -> increment the x position till the x is greater the highest possible x value
+            // -> decrement the width and increment the x further
+            if (line.width == maxLineLength)
+            {
+                line.x++;
+                if(line.x > maxLineX)
+                    line.width--;
+            }
+            else
+            {
+                if (line.x == 0)
+                    line.width = line.width + 1 > secondImage->cols ? secondImage->cols : line.width + 1;
+                else
+                {
+                    line.x++;
+                    line.width--;
+                }
+            }
         }
         block.y++;
         line.y++;
@@ -74,7 +105,7 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 
 #pragma endregion
 
-    return outputImage;
+    return std::pair<Mat, int> (outputImage, maxNegativValue);
 }
 
 Mat absoulteSumDifference(Mat image, Mat templateImage)

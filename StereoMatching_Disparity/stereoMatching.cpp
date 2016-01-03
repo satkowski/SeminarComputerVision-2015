@@ -24,7 +24,7 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
     int maxLineLength = maxDisparity * 2 + 1 + blockRadius * 2;
     int maxLineX = secondImage->cols - maxLineLength - 1;
 
-    Mat outputImage = Mat(secondImage->rows - 2 * blockRadius, secondImage->cols - 2 * blockRadius, CV_32S);
+    Mat outputImage = Mat(secondImage->rows, secondImage->cols, CV_32S);
     for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
     {
         // Reset the rectangles
@@ -70,7 +70,7 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
             else if (matchingCriteria == 2)
                 selectedLoc = maxLoc;
 
-            outputImage.at<int>(cY - blockRadius, cX - blockRadius) = offset * ((line.x - (cX - blockRadius)) + selectedLoc.x);
+            outputImage.at<int>(cY, cX) = offset * ((line.x - (cX - blockRadius)) + selectedLoc.x);
 
 #pragma endregion
 

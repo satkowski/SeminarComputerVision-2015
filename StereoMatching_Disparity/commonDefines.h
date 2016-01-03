@@ -36,7 +36,14 @@
 #define OUTPUTIMAGE_POINTCLOUD_NAME "outputImage_StereoMatching_PointCloud.jpg"
 #define OUTPUTIMAGE_POINTCLOUD_PATH "../Bilder/Output/" OUTPUTIMAGE_POINTCLOUD_NAME
 
-// Postprocessing variables
+// Postprocessing parameters
 #define MEDIANSIZE 5
+
+// Colourd point cloud parameters
+// That parameters are for the 2 images in the "Bilder" folder (left2.png and right2.png)
+#define DISTANCE_BETWEEN_IMAGES 8
+#define DEPTH_OF_OBJECT 280
+#define OBJECT_POSITION_X 229
+#define OBJECT_POSITION_Y 126
 
 #endif // COMMONDEFINES_H#

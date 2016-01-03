@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="coloredPointCloud.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="postProcessing.cpp" />
     <ClCompile Include="stereoMatching.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="coloredPointCloud.h" />
     <ClInclude Include="commonDefines.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="postProcessing.h" />

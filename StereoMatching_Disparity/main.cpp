@@ -80,7 +80,7 @@ int main(int argc, const char** argv)
     Vec<void*, 5> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria, &maxDisparity);
     Mat outputImage = calcDisparity(&data, true);
 
-#pragma region Post processing
+#pragma region Post processing an other stuff
 
     Mat outputImageSwitched, pointCloudImage;
     if (postProc && !pointCloud)
@@ -94,7 +94,7 @@ int main(int argc, const char** argv)
     }
     else if(pointCloud)
     {
-
+        pointCloudImage = createColoredPointCloudImage(&leftImage, &outputImage);
     }
     else
         outputImage.convertTo(outputImage, CV_8U);
@@ -109,6 +109,7 @@ int main(int argc, const char** argv)
     imshow(RIGHTIMAGE_WINDOW, rightImage);
     namedWindow(OUTPUTNORMAL_WINDOW, 0);
     imshow(OUTPUTNORMAL_WINDOW, outputImage);
+    imwrite(OUTPUTIMAGENORMAL_PATH, outputImage);
     if (postProc && !pointCloud)
     {
         namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
@@ -123,9 +124,7 @@ int main(int argc, const char** argv)
     }
 
 #pragma endregion
-
-    imwrite(OUTPUTIMAGENORMAL_PATH, outputImage);
-
+    
     waitKey();
     return 0;
 }

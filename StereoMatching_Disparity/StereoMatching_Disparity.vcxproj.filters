@@ -24,6 +24,9 @@
     <ClCompile Include="postProcessing.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="coloredPointCloud.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -36,6 +39,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="postProcessing.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="coloredPointCloud.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,8 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_MATCHINGCRITERITA_LIST " | 0 | matching criteria:\n 0 - SSD\n 1 - ASD\n 2 - Cross Correlation}"
                           "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch}"
                           "{" ARGUMENT_MAXDISPARITY_LIST " | 8 | maximum disparity of a pixel}"
-                          "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}";
+                          "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}"
+                          "{" ARGUMENT_COLOREDPOINTCLOUD_LIST " |   | should be a coloured point cloud created}";
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
@@ -72,6 +73,7 @@ int main(int argc, const char** argv)
         return -1;        
     }
     bool postProc = parser.has(ARGUMENT_POSTPROCESSING_STRING);
+    bool pointCloud = parser.has(ARGUMENT_COLOREDPOINTCLOUD_STRING);
 
 #pragma endregion
 
@@ -80,8 +82,8 @@ int main(int argc, const char** argv)
 
 #pragma region Post processing
 
-    Mat outputImageSwitched;
-    if (postProc)
+    Mat outputImageSwitched, pointCloudImage;
+    if (postProc && !pointCloud)
     {
         data.val[0] = &rightImage;
         data.val[1] = &leftImage;
@@ -89,6 +91,10 @@ int main(int argc, const char** argv)
         outputImageSwitched = calcDisparity(&data, false);
 
         postProccesing(&outputImage, &outputImageSwitched);
+    }
+    else if(pointCloud)
+    {
+
     }
     else
         outputImage.convertTo(outputImage, CV_8U);
@@ -103,11 +109,17 @@ int main(int argc, const char** argv)
     imshow(RIGHTIMAGE_WINDOW, rightImage);
     namedWindow(OUTPUTNORMAL_WINDOW, 0);
     imshow(OUTPUTNORMAL_WINDOW, outputImage);
-    if (postProc)
+    if (postProc && !pointCloud)
     {
         namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
         imshow(OUTPUTNORMALSWITCHED_WINDOW, outputImageSwitched);
         imwrite(OUTPUTIMAGESWITCHED_PATH, outputImageSwitched);
+    }
+    else if (pointCloud)
+    {
+        namedWindow(OUTPUT_POINTCLOUD_WINDOW, 0);
+        imshow(OUTPUT_POINTCLOUD_WINDOW, pointCloudImage);
+        imwrite(OUTPUTIMAGE_POINTCLOUD_PATH, pointCloudImage);
     }
 
 #pragma endregion

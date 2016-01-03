@@ -9,6 +9,7 @@
 #define ARGUMENT_BLOCKSIZE_STRING "bs"
 #define ARGUMENT_POSTPROCESSING_STRING "pp"
 #define ARGUMENT_MAXDISPARITY_STRING "md"
+#define ARGUMENT_COLOREDPOINTCLOUD_STRING "cpc"
 
 // The list of values that can activate certain things
 #define ARGUMENT_HELP_LIST ARGUMENT_HELP_STRING " h usage ?"
@@ -18,18 +19,22 @@
 #define ARGUMENT_BLOCKSIZE_LIST ARGUMENT_BLOCKSIZE_STRING " blockS size blockSize"
 #define ARGUMENT_POSTPROCESSING_LIST ARGUMENT_POSTPROCESSING_STRING " postP"
 #define ARGUMENT_MAXDISPARITY_LIST ARGUMENT_MAXDISPARITY_STRING " maxD"
+#define ARGUMENT_COLOREDPOINTCLOUD_LIST ARGUMENT_COLOREDPOINTCLOUD_STRING " coloredPointCloud"
 
 // Name of the Windows
 #define LEFTIMAGE_WINDOW "LeftImage"
 #define RIGHTIMAGE_WINDOW "RightImage"
 #define OUTPUTNORMAL_WINDOW "Disparity"
 #define OUTPUTNORMALSWITCHED_WINDOW "DisparitySwitched"
+#define OUTPUT_POINTCLOUD_WINDOW "ColordPointCloud"
 
 // Outputimage name and path
 #define OUTPUTIMAGENORMALE_NAME "outputImage_StereoMatching_Disparity.jpg"
 #define OUTPUTIMAGENORMAL_PATH "../Bilder/Output/" OUTPUTIMAGENORMALE_NAME
-#define OUTPUTIMAGESWITCHED_NAME "outputImage_StereoMatching_Disparity.jpg"
+#define OUTPUTIMAGESWITCHED_NAME "outputImage_StereoMatching_DisparitySwitched.jpg"
 #define OUTPUTIMAGESWITCHED_PATH "../Bilder/Output/" OUTPUTIMAGESWITCHED_NAME
+#define OUTPUTIMAGE_POINTCLOUD_NAME "outputImage_StereoMatching_PointCloud.jpg"
+#define OUTPUTIMAGE_POINTCLOUD_PATH "../Bilder/Output/" OUTPUTIMAGE_POINTCLOUD_NAME
 
 // Postprocessing variables
 #define MEDIANSIZE 5

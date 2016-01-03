@@ -76,13 +76,15 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
 
             block.x++;
             
+#pragma region Increment line rectangle
+
             // Increment the width till the widht is the max length.
             // -> increment the x position till the x is greater the highest possible x value
             // -> decrement the width and increment the x further
             if (line.width == maxLineLength)
             {
                 line.x++;
-                if(line.x > maxLineX)
+                if (line.x > maxLineX)
                     line.width--;
             }
             else
@@ -95,6 +97,8 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
                     line.width--;
                 }
             }
+
+#pragma endregion
         }
         block.y++;
         line.y++;

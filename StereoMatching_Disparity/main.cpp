@@ -89,9 +89,9 @@ int main(int argc, const char** argv)
         outputImageSwitched = calcDisparity(&data, false);
 
         postProccesing(&outputImage, &outputImageSwitched);
-        outputImageSwitched.convertTo(outputImageSwitched, CV_8U);
     }
-    outputImage.convertTo(outputImage, CV_8U);
+    else
+        outputImage.convertTo(outputImage, CV_8U);
 
 #pragma endregion
 

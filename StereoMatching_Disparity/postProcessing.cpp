@@ -11,21 +11,28 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
     {
         for (int cX = 0; cX < firstDisparity->cols; cX++)
         {
-            int firstPosition = cX + firstDisparity->at<int>(cY, cX);
+            int firstPosition = cX + -firstDisparity->at<int>(cY, cX);
             int secondPosition = firstPosition + secondDisparity->at<int>(cY, firstPosition);
 
             if (secondPosition != cX)
                 unequal++;
         }
     }
-    std::cout << "failure rate: " << unequal / (firstDisparity->rows * firstDisparity->cols) << std::endl;
+    std::cout << "failure rate: " << (float)unequal / (firstDisparity->rows * firstDisparity->cols) << std::endl;
 
 #pragma endregion
+
+    firstDisparity->convertTo(*firstDisparity, CV_8U);
+    secondDisparity->convertTo(*secondDisparity, CV_8U);
 
 #pragma region Median
 
-    medianBlur(*firstDisparity, *firstDisparity, MEDIANSIZE);
-    medianBlur(*secondDisparity, *secondDisparity, MEDIANSIZE);
+    Mat newFirstDisparity, newSecondDisparity;
+    medianBlur(*firstDisparity, newFirstDisparity, MEDIANSIZE);
+    medianBlur(*secondDisparity, newSecondDisparity, MEDIANSIZE);
 
 #pragma endregion
+
+    *firstDisparity = newFirstDisparity;
+    *secondDisparity = newSecondDisparity;
 }

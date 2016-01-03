@@ -32,6 +32,6 @@
 #define OUTPUTIMAGESWITCHED_PATH "../Bilder/Output/" OUTPUTIMAGESWITCHED_NAME
 
 // Postprocessing variables
-#define MEDIANSIZE 4
+#define MEDIANSIZE 5
 
 #endif // COMMONDEFINES_H#

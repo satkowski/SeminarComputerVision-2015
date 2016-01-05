@@ -172,7 +172,7 @@ Mat findeOptimalBlockSize(Vec<void*, 5>* userdata)
 
 #pragma region Calculate the optimal block size
 
-    Mat optimalBlockSizeMat = Mat(firstImage->rows - 2 * minBlockRadius, firstImage->cols - 2 * minBlockRadius, CV_32S);
+    Mat optimalBlockSizeMat = Mat(firstImage->rows, firstImage->cols, CV_32S);
     for (int c = 0; c < TIMES_BLOCKRADIUS_CHANGED; c++)
     {
 

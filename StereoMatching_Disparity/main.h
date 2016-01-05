@@ -11,4 +11,7 @@
 // Main method
 int main(int argc, const char** argv);
 
+//Find the optimal blocksize for each pixel
+cv::Mat findeOptimalBlockSize(cv::Vec<void*, 5>* userdata);
+
 #endif // MAIN_H

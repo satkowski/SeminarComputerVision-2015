@@ -2,39 +2,43 @@
 
 using namespace cv;
 
-Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
+Mat calcDisparity(Vec<void*, 5>* userdata, Mat* blockRadiusMat, bool firstImageLeft)
 {
 #pragma region Casting of the data
 
     Mat* firstImage = static_cast<Mat*>(userdata->val[0]);
     Mat* secondImage = static_cast<Mat*>(userdata->val[1]);
-    int blockRadius = *static_cast<int*>(userdata->val[2]);
+    int standardBlockRadius = *static_cast<int*>(userdata->val[2]);
     int matchingCriteria = *static_cast<int*>(userdata->val[3]);
     int maxDisparity = *static_cast<int*>(userdata->val[4]);
 
 #pragma endregion
 
+    bool useStandardBlockSize = false;
+    if (blockRadiusMat == NULL || blockRadiusMat->empty())
+        useStandardBlockSize = true;
+
 #pragma region Calculate the disparity
 
     int offset = firstImageLeft ? -1 : 1;
     // Only use the line of the leftImage and the template of the right image
-    Rect block = Rect(0, 0, 1 + 2 * blockRadius, 1 + 2 * blockRadius);
-    Rect line = Rect(0, 0, 0, 1 + 2 * blockRadius);
+    Rect block = Rect(0, 0, 1 + 2 * standardBlockRadius, 1 + 2 * standardBlockRadius);
+    Rect line = Rect(0, 0, 0, 1 + 2 * standardBlockRadius);
     // The maximal length of the row and the highest possible x value with full length row
-    int maxLineLength = maxDisparity * 2 + 1 + blockRadius * 2;
+    int maxLineLength = maxDisparity * 2 + 1 + standardBlockRadius * 2;
     int maxLineX = secondImage->cols - maxLineLength - 1;
 
     Mat outputImage = Mat(secondImage->rows, secondImage->cols, CV_32S);
-    for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
+    for (int cY = standardBlockRadius; cY < firstImage->rows - standardBlockRadius; cY++)
     {
         // Reset the rectangles
-        block = Rect(0, block.y, 1 + 2 * blockRadius, block.height);
-        if(blockRadius * 2 + 1 + maxDisparity > secondImage->cols)
+        block = Rect(0, block.y, 1 + 2 * standardBlockRadius, block.height);
+        if(standardBlockRadius * 2 + 1 + maxDisparity > secondImage->cols)
             line = Rect(0, line.y, secondImage->cols, line.height);
         else
-            line = Rect(0, line.y, blockRadius * 2 + 1 + maxDisparity, line.height);
+            line = Rect(0, line.y, standardBlockRadius * 2 + 1 + maxDisparity, line.height);
 
-        for (int cX = blockRadius; cX < firstImage->cols - blockRadius; cX++)
+        for (int cX = standardBlockRadius; cX < firstImage->cols - standardBlockRadius; cX++)
         {
             // Create the line and the block image
             Mat templateFirstI = Mat(*firstImage, block);
@@ -70,7 +74,7 @@ Mat calcDisparity(Vec<void*, 5>* userdata, bool firstImageLeft)
             else if (matchingCriteria == 2)
                 selectedLoc = maxLoc;
 
-            outputImage.at<int>(cY, cX) = offset * ((line.x - (cX - blockRadius)) + selectedLoc.x);
+            outputImage.at<int>(cY, cX) = offset * ((line.x - (cX - standardBlockRadius)) + selectedLoc.x);
 
 #pragma endregion
 

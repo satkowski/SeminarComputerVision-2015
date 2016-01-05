@@ -12,10 +12,11 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_LEFTIMAGE_LIST " |   | left soruce image path}"
                           "{" ARGUMENT_RIGHTIMAGE_LIST " |   | right soruce image path}"
                           "{" ARGUMENT_MATCHINGCRITERITA_LIST " | 0 | matching criteria:\n 0 - SSD\n 1 - ASD\n 2 - Cross Correlation}"
-                          "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch}"
+                          "{" ARGUMENT_BLOCKSIZE_LIST " | 2 | radius around an pixel for the patch, for the optimal block size option, this is the minimum block radius}"
                           "{" ARGUMENT_MAXDISPARITY_LIST " | 8 | maximum disparity of a pixel}"
                           "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}"
-                          "{" ARGUMENT_COLOREDPOINTCLOUD_LIST " |   | should be a coloured point cloud created}";
+                          "{" ARGUMENT_COLOREDPOINTCLOUD_LIST " |   | should be a coloured point cloud created}"
+                          "{" ARGUMENT_OPTMIMALBLOCKSIZE_LIST " |   | should be searched for the optimal block size for each pixel and than calculated the disparity}";
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
@@ -74,13 +75,19 @@ int main(int argc, const char** argv)
     }
     bool postProc = parser.has(ARGUMENT_POSTPROCESSING_STRING);
     bool pointCloud = parser.has(ARGUMENT_COLOREDPOINTCLOUD_STRING);
+    bool optimalBlockSize = parser.has(ARGUMENT_OPTMIMALBLOCKSIZE_STRING);
 
 #pragma endregion
 
     Vec<void*, 5> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria, &maxDisparity);
-    Mat outputImage = calcDisparity(&data, true);
 
-#pragma region Post processing an other stuff
+    Mat optimalBlockSizeMat;
+    if (optimalBlockSize)
+        optimalBlockSizeMat = findeOptimalBlockSize(&data);
+
+    Mat outputImage = calcDisparity(&data, &optimalBlockSizeMat, true);
+
+#pragma region Post processing an other calculations
 
     Mat outputImageSwitched, pointCloudImage;
     if (postProc && !pointCloud)
@@ -88,7 +95,7 @@ int main(int argc, const char** argv)
         data.val[0] = &rightImage;
         data.val[1] = &leftImage;
 
-        outputImageSwitched = calcDisparity(&data, false);
+        outputImageSwitched = calcDisparity(&data, &optimalBlockSizeMat, false);
 
         postProccesing(&outputImage, &outputImageSwitched);
     }
@@ -127,4 +134,53 @@ int main(int argc, const char** argv)
     
     waitKey();
     return 0;
+}
+
+Mat findeOptimalBlockSize(Vec<void*, 5>* userdata)
+{
+#pragma region Casting of the data
+
+    Mat* firstImage = static_cast<Mat*>(userdata->val[0]);
+    int* blockRadius = static_cast<int*>(userdata->val[2]);
+
+#pragma endregion
+
+    int minBlockRadius = *blockRadius;
+    int actualBlockRadius = *blockRadius;
+
+#pragma region Calculate the disparities
+
+    std::vector<int> blockRadii;
+    std::vector<std::pair<Mat, Mat> > disparityImages;
+    for (int c = 0; c < TIMES_BLOCKRADIUS_CHANGED; c++)
+    {
+        *blockRadius = actualBlockRadius;
+        Mat leftDisparity = calcDisparity(userdata, NULL, true);
+
+        userdata->val[0] = userdata->val[1];
+        userdata->val[1] = firstImage;
+        Mat rightDisparity = calcDisparity(userdata, NULL, false);
+        userdata->val[1] = userdata->val[0];
+        userdata->val[0] = firstImage;
+
+        blockRadii.push_back(actualBlockRadius);
+        disparityImages.push_back(std::pair<Mat, Mat>(leftDisparity, rightDisparity));
+        actualBlockRadius *= 2;
+    }
+
+#pragma endregion
+
+#pragma region Calculate the optimal block size
+
+    Mat optimalBlockSizeMat = Mat(firstImage->rows - 2 * minBlockRadius, firstImage->cols - 2 * minBlockRadius, CV_32S);
+    for (int c = 0; c < TIMES_BLOCKRADIUS_CHANGED; c++)
+    {
+
+    }
+
+#pragma endregion
+    
+    *blockRadius = minBlockRadius;
+
+    return optimalBlockSizeMat;
 }

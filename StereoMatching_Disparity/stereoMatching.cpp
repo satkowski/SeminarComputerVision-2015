@@ -21,14 +21,8 @@ Mat calcDisparity(Vec<void*, 5>* userdata, Mat* blockRadiusMat, bool firstImageL
 #pragma region Calculate the disparity
 
     int offset = firstImageLeft ? -1 : 1;
-    //// Only use the line of the leftImage and the template of the right image
-    //Rect block = Rect(0, 0, 1 + 2 * standardBlockRadius, 1 + 2 * standardBlockRadius);
-    //Rect line = Rect(0, 0, 0, 1 + 2 * standardBlockRadius);
-    // The maximal length of the row and the highest possible x value with full length row
-    int maxLineLength = maxDisparity * 2 + 1 + standardBlockRadius * 2;
-    int maxLineX = secondImage->cols - maxLineLength - 1;
 
-    Mat outputImage = Mat(secondImage->rows, secondImage->cols, CV_32S);
+    Mat outputImage = Mat(secondImage->rows, secondImage->cols, CV_32S, Scalar(0));
     for (int cY = standardBlockRadius; cY < firstImage->rows - standardBlockRadius; cY++)
         for (int cX = standardBlockRadius; cX < firstImage->cols - standardBlockRadius; cX++)
         {
@@ -77,6 +71,7 @@ Mat calcDisparity(Vec<void*, 5>* userdata, Mat* blockRadiusMat, bool firstImageL
             double minValue, maxValue;
             minMaxLoc(lineOutput, &minValue, &maxValue, &minLoc, &maxLoc);
 
+            // Decide which location ist the current best
             if (matchingCriteria == 0 || matchingCriteria == 1)
                 selectedLoc = minLoc;
             else if (matchingCriteria == 2)

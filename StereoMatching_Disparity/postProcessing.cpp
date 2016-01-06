@@ -4,6 +4,13 @@ using namespace cv;
 
 void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
 {
+#pragma region Median
+
+    medianFilterInt(firstDisparity);
+    medianFilterInt(secondDisparity);
+
+#pragma endregion
+
 #pragma region Left-right-consistency
 
     int unequal = 0;
@@ -24,15 +31,25 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
 
     firstDisparity->convertTo(*firstDisparity, CV_8U);
     secondDisparity->convertTo(*secondDisparity, CV_8U);
+}
 
-#pragma region Median
+void medianFilterInt(Mat* image)
+{
+    if (image->type() != CV_32S)
+        return;
 
-    Mat newFirstDisparity, newSecondDisparity;
-    medianBlur(*firstDisparity, newFirstDisparity, MEDIANSIZE);
-    medianBlur(*secondDisparity, newSecondDisparity, MEDIANSIZE);
+    Mat medianImage = Mat(image->rows, image->cols, CV_32S, Scalar(0));
+    for (int cY = MEDIANSIZE; cY < image->rows - MEDIANSIZE; cY++)
+        for (int cX = MEDIANSIZE; cX < image->cols - MEDIANSIZE; cX++)
+        {
+            std::vector<int> pixelVector;
+            for (int wY = cY - MEDIANSIZE; wY <= cY + MEDIANSIZE; wY++)
+                for (int wX = cX - MEDIANSIZE; wX <= cX + MEDIANSIZE; wX++)
+                    pixelVector.push_back(image->at<int>(wY, wX));
 
-#pragma endregion
+            std::sort(pixelVector.begin(), pixelVector.end());
+            medianImage.at<int>(cY, cX) = pixelVector.at(pixelVector.size() / 2);
+        }
 
-    *firstDisparity = newFirstDisparity;
-    *secondDisparity = newSecondDisparity;
+    *image = medianImage;
 }

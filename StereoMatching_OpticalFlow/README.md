@@ -1,7 +1,7 @@
-Calculating disperaty
+Calculating Optical Flow
 ==============================================
 
-Calculate the disparity of 2 given images (rectified) with different matching criterias and a given block size (radius) around all pixels.
+Calculate the optical flow of 2 given images with different matching criterias and a given block size (radius) around all pixels.
 
 Calling Arguments
 =================
@@ -15,13 +15,7 @@ Calling Arguments
 
 -blockS=[uint]
 
--maxD=[uint]
-
--postP
-
--cpc
-
--obs
+-maxF=[uint]
 
 Filter Type (for -match=)
 ==========================

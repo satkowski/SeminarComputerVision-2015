@@ -15,7 +15,6 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
 
     int unequal = 0;
     for (int cY = 0; cY < firstDisparity->rows; cY++)
-    {
         for (int cX = 0; cX < firstDisparity->cols; cX++)
         {
             int firstPosition = cX + -firstDisparity->at<int>(cY, cX);
@@ -24,10 +23,31 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
             if (secondPosition != cX)
                 unequal++;
         }
-    }
     std::cout << "failure rate: " << (float)unequal / (firstDisparity->rows * firstDisparity->cols) << std::endl;
 
 #pragma endregion
+
+#pragma region Occlusion
+
+    std::vector<Point2i> firstOcclusion, secondOcclusion;
+    for (int cY = 0; cY < firstDisparity->rows; cY++)
+        for (int cX = 0; cX < firstDisparity->cols; cX++)
+        {
+            int firstPosition = cX + -firstDisparity->at<int>(cY, cX);
+            int secondPosition = firstPosition + secondDisparity->at<int>(cY, firstPosition);
+
+            if (abs(secondPosition - cX) > OCCLUSION_MAX_DIFFERENCE)
+                firstOcclusion.push_back(Point2i(cX, cY));
+
+            firstPosition = cX + secondDisparity->at<int>(cY, cX);
+            secondPosition = firstPosition + -firstDisparity->at<int>(cY, firstPosition);
+
+            if (abs(secondPosition - cX) > OCCLUSION_MAX_DIFFERENCE)
+                secondOcclusion.push_back(Point2i(cX, cY));
+        }
+
+#pragma endregion
+
 
     firstDisparity->convertTo(*firstDisparity, CV_8U);
     secondDisparity->convertTo(*secondDisparity, CV_8U);

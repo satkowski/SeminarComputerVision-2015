@@ -40,6 +40,7 @@
 
 // Postprocessing parameters
 #define MEDIANSIZE 5
+#define OCCLUSION_MAX_DIFFERENCE 3
 
 // Colourd point cloud parameters
 // That parameters are for the 2 images in the "Bilder" folder (left2.png and right2.png)

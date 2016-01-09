@@ -1,4 +1,4 @@
-//-l=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\left2.png -r=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\right2.png -m=0 -bs=2 -md=20
+//-l=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\left2.png -r=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\right2.png -gt=D:\Dokumente\Workspaces\C++_VS\SeminarComputerVision\Bilder\GT.png -m=0 -bs=2 -md=20
 #include "main.h"
 
 using namespace cv;
@@ -16,7 +16,8 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_MAXDISPARITY_LIST " | 8 | maximum disparity of a pixel}"
                           "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}"
                           "{" ARGUMENT_COLOREDPOINTCLOUD_LIST " |   | should be a coloured point cloud created}"
-                          "{" ARGUMENT_OPTMIMALBLOCKSIZE_LIST " |   | should be searched for the optimal block size for each pixel and than calculated the disparity}";
+                          "{" ARGUMENT_OPTMIMALBLOCKSIZE_LIST " |   | should be searched for the optimal block size for each pixel and than calculated the disparity}"
+                          "{" ARGUMENT_GROUNDTRUTH_LIST " |   | the ground truth image. Only necessary with the optimal block size parameter}";
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
@@ -77,13 +78,32 @@ int main(int argc, const char** argv)
     bool pointCloud = parser.has(ARGUMENT_COLOREDPOINTCLOUD_STRING);
     bool optimalBlockSize = parser.has(ARGUMENT_OPTMIMALBLOCKSIZE_STRING);
 
+    Mat groundTruth;
+    if (optimalBlockSize)
+    {
+        String groundTruthImagePath = parser.get<String>(ARGUMENT_GROUNDTRUTH_STRING);
+        if (groundTruthImagePath == "")
+        {
+            printf("The first image path is empty\n");
+            return -1;
+        }
+        groundTruth = imread(groundTruthImagePath, CV_LOAD_IMAGE_COLOR);
+        if (groundTruth.empty())
+        {
+            printf("Cannot read the image %s\n", groundTruthImagePath);
+            return -1;
+        }
+
+        groundTruth.convertTo(groundTruth, CV_32S);
+    }
+
 #pragma endregion
 
     Vec<void*, 5> data(&leftImage, &rightImage, &blockRadius, &matchingCriteria, &maxDisparity);
 
     Mat optimalBlockSizeMat;
     if (optimalBlockSize)
-        optimalBlockSizeMat = findeOptimalBlockSize(&data);
+        optimalBlockSizeMat = findeOptimalBlockSize(&data, &groundTruth);
 
     Mat outputImage = calcDisparity(&data, &optimalBlockSizeMat, true);
 
@@ -136,12 +156,13 @@ int main(int argc, const char** argv)
     return 0;
 }
 
-Mat findeOptimalBlockSize(Vec<void*, 5>* userdata)
+Mat findeOptimalBlockSize(Vec<void*, 5>* userdata, Mat* groundTruth)
 {
 #pragma region Casting of the data
 
     Mat* firstImage = static_cast<Mat*>(userdata->val[0]);
     int* blockRadius = static_cast<int*>(userdata->val[2]);
+    int* maxDisparity = static_cast<int*>(userdata->val[4]);
 
 #pragma endregion
 
@@ -157,25 +178,50 @@ Mat findeOptimalBlockSize(Vec<void*, 5>* userdata)
         *blockRadius = actualBlockRadius;
         Mat leftDisparity = calcDisparity(userdata, NULL, true);
 
-        userdata->val[0] = userdata->val[1];
-        userdata->val[1] = firstImage;
-        Mat rightDisparity = calcDisparity(userdata, NULL, false);
-        userdata->val[1] = userdata->val[0];
-        userdata->val[0] = firstImage;
+        //userdata->val[0] = userdata->val[1];
+        //userdata->val[1] = firstImage;
+        //Mat rightDisparity = calcDisparity(userdata, NULL, false);
+        //userdata->val[1] = userdata->val[0];
+        //userdata->val[0] = firstImage;
 
         blockRadii.push_back(actualBlockRadius);
-        disparityImages.push_back(std::pair<Mat, Mat>(leftDisparity, rightDisparity));
+        disparityImages.push_back(std::pair<Mat, Mat>(leftDisparity, Mat()));
         actualBlockRadius *= 2;
     }
 
 #pragma endregion
 
+    // Calculate the offset of the ground truth image
+    Point2i imageMiddlePoint = Point2i(firstImage->cols / 2, firstImage->rows / 2);
+    float offset = (float)disparityImages.at(disparityImages.size() / 2).first.at<int>(imageMiddlePoint) /
+                   groundTruth->at<int>(imageMiddlePoint);
+
 #pragma region Calculate the optimal block size
 
     Mat optimalBlockSizeMat = Mat(firstImage->rows, firstImage->cols, CV_32S);
-    for (int c = 0; c < TIMES_BLOCKRADIUS_CHANGED; c++)
+    for (int cY = 0; cY < firstImage->rows; cY++)
     {
+        for (int cX = 0; cX < firstImage->cols; cX++)
+        {
+            float minDiff = 2 * *maxDisparity;
+            int optimalBlockSize = minBlockRadius;
 
+            // Iterate through all disparities and compare it with the ground truth
+            for (int c = 0; c < TIMES_BLOCKRADIUS_CHANGED; c++)
+            {
+                if (blockRadii.at(c) > cY || blockRadii.at(c) > cX)
+                    break;
+                float actualDiff = abs(offset * groundTruth->at<int>(cY, cX) - disparityImages.at(c).first.at<int>(cY, cX));
+                if (actualDiff < minDiff)
+                {
+                    minDiff = actualDiff;
+                    optimalBlockSize = blockRadii.at(c);
+                }
+                if (minDiff == 0)
+                    break;
+            }
+            optimalBlockSizeMat.at<int>(cY, cX) = optimalBlockSize;
+        }
     }
 
 #pragma endregion

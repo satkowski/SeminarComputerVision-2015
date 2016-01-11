@@ -14,7 +14,94 @@ Mat calcOpticalFlow(Vec<void*, 5>* userdata)
 
 #pragma endregion
 
-    return Mat();
+    Mat test;
+    cvtColor(*firstImage, test, COLOR_BGR2HSV_FULL);
+    Vec3b test2 = test.at<Vec3b>(168, 153);
+
+#pragma region Calculate the disparity
+    
+    Mat outputX = Mat(secondImage->rows, secondImage->cols, CV_32F, Scalar(0.0f));
+    Mat outputY = Mat(secondImage->rows, secondImage->cols, CV_32F, Scalar(0.0f));
+    for (int cY = blockRadius; cY < firstImage->rows - blockRadius; cY++)
+        for (int cX = blockRadius; cX < firstImage->cols - blockRadius; cX++)
+        {
+#pragma region Create the rectangles
+
+            int blockHeight = 1 + 2 * blockRadius;
+            int minX = cX - blockRadius - maxFlow;
+            minX = minX < 0 ? 0 : minX;
+            int maxX = cX + blockRadius + maxFlow;
+            maxX = maxX >= secondImage->cols ? secondImage->cols - 1 : maxX;
+            int minY = cY - blockRadius - maxFlow;
+            minY = minY < 0 ? 0 : minY;
+            int maxY = maxY = cY + blockRadius + maxFlow;
+            maxY = maxY >= secondImage->rows ? secondImage->rows - 1 : maxY;
+            Rect templateBlock = Rect(cX - blockRadius, cY - blockRadius, 1 + 2 * blockRadius, blockHeight);
+            Rect imageBlock = Rect(minX, minY, maxX - minX, maxY - minY);
+
+#pragma endregion
+
+            // Create the line and the block image
+            Mat templateFirstI = Mat(*firstImage, templateBlock);
+            Mat blockSecondI = Mat(*secondImage, imageBlock);
+
+#pragma region Decide the method
+
+            // Decide which matching should be used
+            Mat blockOutput;
+            switch (matchingCriteria)
+            {
+            case 0:
+                matchTemplate(blockSecondI, templateFirstI, blockOutput, CV_TM_SQDIFF);
+                break;
+            case 1:
+                blockOutput = absoulteSumDifference(blockSecondI, templateFirstI);
+                break;
+            case 2:
+                matchTemplate(blockSecondI, templateFirstI, blockOutput, CV_TM_CCORR);
+                break;
+            }
+
+#pragma endregion
+
+#pragma region Calculate the disparity
+
+            Point minLoc, maxLoc, selectedLoc;
+            double minValue, maxValue;
+            minMaxLoc(blockOutput, &minValue, &maxValue, &minLoc, &maxLoc);
+
+            // Decide which location ist the current best
+            if (matchingCriteria == 0 || matchingCriteria == 1)
+                selectedLoc = minLoc;
+            else if (matchingCriteria == 2)
+                selectedLoc = maxLoc;
+
+            outputX.at<float>(cY, cX) = ((imageBlock.x - (cX - blockRadius)) + selectedLoc.x);
+            outputY.at<float>(cY, cX) = ((imageBlock.y - (cY - blockRadius)) + selectedLoc.y);
+
+#pragma endregion
+        }
+
+#pragma region Calculate HSV and optical flow
+
+    // Calculate the angle and the magnitude of each disparity
+    Mat angleMat = Mat(secondImage->rows, secondImage->cols, CV_32F, Scalar(0.0f));
+    Mat magnitudeMat = Mat(secondImage->rows, secondImage->cols, CV_32F, Scalar(0.0f));
+    cartToPolar(outputX, outputY, magnitudeMat, angleMat, true);
+
+    // Create the hsv vector from the angle and the magnitude
+    Mat hsvOutput = Mat(secondImage->rows, secondImage->cols, CV_32FC3, Scalar(0.0f, 0.0f, 0.0f));
+    for (int cY = 0; cY < angleMat.rows; cY++)
+        for (int cX = 0; cX < angleMat.cols; cX++)
+            hsvOutput.at<Vec3f>(cY, cX) = Vec3f(angleMat.at<float>(cY, cX), magnitudeMat.at<float>(cY, cX), 50.0);
+
+    // Convert the color
+    Mat rgbOutput;
+    cvtColor(hsvOutput, rgbOutput, COLOR_HSV2BGR);
+
+#pragma endregion
+
+    return rgbOutput;
 }
 
 Mat absoulteSumDifference(Mat image, Mat templateImage)

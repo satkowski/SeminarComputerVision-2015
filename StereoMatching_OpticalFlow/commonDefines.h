@@ -26,4 +26,6 @@
 #define OUTPUTIMAGE_NAME "outputImage_StereoMatching_OpticalFlow.jpg"
 #define OUTPUTIMAGE_PATH "../Bilder/Output/" OUTPUTIMAGE_NAME
 
+#define PI 3.14159265359
+
 #endif // COMMONDEFINES_H#

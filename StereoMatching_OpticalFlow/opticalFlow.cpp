@@ -14,10 +14,6 @@ Mat calcOpticalFlow(Vec<void*, 5>* userdata)
 
 #pragma endregion
 
-    Mat test;
-    cvtColor(*firstImage, test, COLOR_BGR2HSV_FULL);
-    Vec3b test2 = test.at<Vec3b>(168, 153);
-
 #pragma region Calculate the disparity
     
     Mat outputX = Mat(secondImage->rows, secondImage->cols, CV_32F, Scalar(0.0f));

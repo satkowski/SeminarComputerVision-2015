@@ -17,7 +17,8 @@ int main(int argc, const char** argv)
                           "{" ARGUMENT_POSTPROCESSING_LIST " |   | should be post processing (median, left-right-consitency) activated}"
                           "{" ARGUMENT_COLOREDPOINTCLOUD_LIST " |   | should be a coloured point cloud created}"
                           "{" ARGUMENT_OPTMIMALBLOCKSIZE_LIST " |   | should be searched for the optimal block size for each pixel and than calculated the disparity}"
-                          "{" ARGUMENT_GROUNDTRUTH_LIST " |   | the ground truth image. Only necessary with the optimal block size parameter}";
+                          "{" ARGUMENT_ACCURACYCHECK_LIST " |   | should be the accuracy measured with the ground truth}"
+                          "{" ARGUMENT_GROUNDTRUTH_LIST " |   | the ground truth image. Necessary with the optimal block size parameter and the accuracy check}";
 
     // Reading the calling arguments
     CommandLineParser parser(argc, argv, keyMap);
@@ -77,9 +78,10 @@ int main(int argc, const char** argv)
     bool postProc = parser.has(ARGUMENT_POSTPROCESSING_STRING);
     bool pointCloud = parser.has(ARGUMENT_COLOREDPOINTCLOUD_STRING);
     bool optimalBlockSize = parser.has(ARGUMENT_OPTMIMALBLOCKSIZE_STRING);
+    bool accuracyCheck = parser.has(ARGUMENT_ACCURACYCHECK_STRING);
 
     Mat groundTruth;
-    if (optimalBlockSize)
+    if (optimalBlockSize || accuracyCheck)
     {
         String groundTruthImagePath = parser.get<String>(ARGUMENT_GROUNDTRUTH_STRING);
         if (groundTruthImagePath == "")
@@ -87,7 +89,7 @@ int main(int argc, const char** argv)
             printf("The first image path is empty\n");
             return -1;
         }
-        groundTruth = imread(groundTruthImagePath, CV_LOAD_IMAGE_COLOR);
+        groundTruth = imread(groundTruthImagePath, CV_LOAD_IMAGE_GRAYSCALE);
         if (groundTruth.empty())
         {
             printf("Cannot read the image %s\n", groundTruthImagePath);
@@ -107,7 +109,7 @@ int main(int argc, const char** argv)
 
     Mat outputImage = calcDisparity(&data, &optimalBlockSizeMat, true);
 
-#pragma region Post processing an other calculations
+#pragma region Post processing, other calculations and image convertion
 
     Mat outputImageSwitched, pointCloudImage;
     if (postProc && !pointCloud)
@@ -123,19 +125,24 @@ int main(int argc, const char** argv)
     {
         pointCloudImage = createColoredPointCloudImage(&leftImage, &outputImage);
     }
-    else
-        outputImage.convertTo(outputImage, CV_8U);
+
+    if (accuracyCheck)
+        checkAccuracy(&outputImage, &groundTruth);
+
+    outputImage.convertTo(outputImage, CV_8U);
+    if (!outputImageSwitched.empty())
+        outputImageSwitched.convertTo(outputImageSwitched, CV_8U);
 
 #pragma endregion
 
     Point minLoc, maxLoc;
     double minValue, maxValue;
     minMaxLoc(outputImage, &minValue, &maxValue, &minLoc, &maxLoc);
-    outputImage *= 255 / maxValue;
+    outputImage *= 255.0 / maxValue;
     if (postProc && !pointCloud)
     {
         minMaxLoc(outputImageSwitched, &minValue, &maxValue, &minLoc, &maxLoc);
-        outputImageSwitched *= 255 / maxValue;
+        outputImageSwitched *= 255.0 / maxValue;
     }
 
 #pragma region Setting the windows

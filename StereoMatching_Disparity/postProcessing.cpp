@@ -11,21 +11,7 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity, int blockRadius)
 
 #pragma endregion
 
-#pragma region Left-right-consistency
-
-    int unequal = 0;
-    for (int cY = 0; cY < firstDisparity->rows; cY++)
-        for (int cX = 0; cX < firstDisparity->cols; cX++)
-        {
-            int firstPosition = cX + -firstDisparity->at<int>(cY, cX);
-            int secondPosition = firstPosition + secondDisparity->at<int>(cY, firstPosition);
-
-            if (secondPosition != cX)
-                unequal++;
-        }
-    std::cout << "failure rate: " << (float)unequal / (firstDisparity->rows * firstDisparity->cols) << std::endl;
-
-#pragma endregion
+    leftRightConsistency(firstDisparity, secondDisparity);
 
 #pragma region Occlusion
 
@@ -52,25 +38,45 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity, int blockRadius)
         secondDisparity->at<float>(occlusion) = getMedian_Float(secondDisparity, occlusion, OCCLUSION_BLOCKSIZE_FACTOR * blockRadius);
 
 #pragma endregion
-    
-#pragma region Left-right-consistency
 
-    unequal = 0;
-    for (int cY = 0; cY < firstDisparity->rows; cY++)
-        for (int cX = 0; cX < firstDisparity->cols; cX++)
+    leftRightConsistency(firstDisparity, secondDisparity);
+}
+
+void leftRightConsistency(Mat* leftDisparity, Mat* rightDisparity)
+{
+    int unequal = 0;
+    for (int cY = 0; cY < leftDisparity->rows; cY++)
+        for (int cX = 0; cX < leftDisparity->cols; cX++)
         {
-            int firstPosition = cX + -firstDisparity->at<int>(cY, cX);
-            int secondPosition = firstPosition + secondDisparity->at<int>(cY, firstPosition);
+            int firstPosition = cX + -leftDisparity->at<int>(cY, cX);
+            int secondPosition = firstPosition + rightDisparity->at<int>(cY, firstPosition);
 
             if (secondPosition != cX)
                 unequal++;
         }
-    std::cout << "failure rate: " << (float)unequal / (firstDisparity->rows * firstDisparity->cols) << std::endl;
+    std::cout << "left-right-consistency failure rate: " << (float)unequal / (leftDisparity->rows * leftDisparity->cols) << std::endl;
+}
+
+void checkAccuracy(Mat* disparity, Mat* groundTruth)
+{
+#pragma region Setting the mat
+
+    Mat adjustedDisparity;
+    disparity->copyTo(adjustedDisparity);
+
+    Point minLoc, maxLoc;
+    double minValue, maxValue;
+    minMaxLoc(adjustedDisparity, &minValue, &maxValue, &minLoc, &maxLoc);
+    adjustedDisparity *= 255.0 / maxValue;
 
 #pragma endregion
 
-    firstDisparity->convertTo(*firstDisparity, CV_8U);
-    secondDisparity->convertTo(*secondDisparity, CV_8U);
+    double failure = 0.0f;
+    for (int cY = 0; cY < adjustedDisparity.rows; cY++)
+        for (int cX = 0; cX < adjustedDisparity.cols; cX++)
+            failure += abs(adjustedDisparity.at<int>(cY, cX) - groundTruth->at<int>(cY, cX));
+
+    std::cout << "accuracy check failure rate :" << failure / (adjustedDisparity.rows * adjustedDisparity.cols) << std::endl;
 }
 
 void medianFilter_Int(Mat* image)

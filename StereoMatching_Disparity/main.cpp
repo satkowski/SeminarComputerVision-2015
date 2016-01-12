@@ -117,7 +117,7 @@ int main(int argc, const char** argv)
 
         outputImageSwitched = calcDisparity(&data, &optimalBlockSizeMat, false);
 
-        postProccesing(&outputImage, &outputImageSwitched);
+        postProccesing(&outputImage, &outputImageSwitched, blockRadius);
     }
     else if(pointCloud)
     {

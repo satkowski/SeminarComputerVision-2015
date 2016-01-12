@@ -47,8 +47,7 @@ void postProccesing(Mat* firstDisparity, Mat* secondDisparity)
         }
 
 #pragma endregion
-
-
+    
     firstDisparity->convertTo(*firstDisparity, CV_8U);
     secondDisparity->convertTo(*secondDisparity, CV_8U);
 }

@@ -89,7 +89,7 @@ Mat calcOpticalFlow(Vec<void*, 5>* userdata)
     Mat hsvOutput = Mat(secondImage->rows, secondImage->cols, CV_32FC3, Scalar(0.0f, 0.0f, 0.0f));
     for (int cY = 0; cY < angleMat.rows; cY++)
         for (int cX = 0; cX < angleMat.cols; cX++)
-            hsvOutput.at<Vec3f>(cY, cX) = Vec3f(angleMat.at<float>(cY, cX), magnitudeMat.at<float>(cY, cX), 50.0);
+            hsvOutput.at<Vec3f>(cY, cX) = Vec3f(angleMat.at<float>(cY, cX), magnitudeMat.at<float>(cY, cX), 50.0f);
 
     // Convert the color
     Mat rgbOutput;

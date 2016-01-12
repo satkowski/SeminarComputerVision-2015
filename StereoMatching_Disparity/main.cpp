@@ -128,6 +128,16 @@ int main(int argc, const char** argv)
 
 #pragma endregion
 
+    Point minLoc, maxLoc;
+    double minValue, maxValue;
+    minMaxLoc(outputImage, &minValue, &maxValue, &minLoc, &maxLoc);
+    outputImage *= 255 / maxValue;
+    if (postProc && !pointCloud)
+    {
+        minMaxLoc(outputImageSwitched, &minValue, &maxValue, &minLoc, &maxLoc);
+        outputImageSwitched *= 255 / maxValue;
+    }
+
 #pragma region Setting the windows
 
     namedWindow(LEFTIMAGE_WINDOW, 0);
@@ -184,17 +194,17 @@ Mat findeOptimalBlockSize(Vec<void*, 5>* userdata, Mat* groundTruth)
         //userdata->val[1] = userdata->val[0];
         //userdata->val[0] = firstImage;
 
+        Point minLoc, maxLoc;
+        double minValue, maxValue;
+        minMaxLoc(leftDisparity, &minValue, &maxValue, &minLoc, &maxLoc);
+        leftDisparity *= 255 / maxValue;
+
         blockRadii.push_back(actualBlockRadius);
         disparityImages.push_back(std::pair<Mat, Mat>(leftDisparity, Mat()));
         actualBlockRadius *= 2;
     }
 
 #pragma endregion
-
-    // Calculate the offset of the ground truth image
-    Point2i imageMiddlePoint = Point2i(firstImage->cols / 2, firstImage->rows / 2);
-    float offset = (float)disparityImages.at(disparityImages.size() / 2).first.at<int>(imageMiddlePoint) /
-                   groundTruth->at<int>(imageMiddlePoint);
 
 #pragma region Calculate the optimal block size
 
@@ -211,7 +221,7 @@ Mat findeOptimalBlockSize(Vec<void*, 5>* userdata, Mat* groundTruth)
             {
                 if (blockRadii.at(c) > cY || blockRadii.at(c) > cX)
                     break;
-                float actualDiff = abs(offset * groundTruth->at<int>(cY, cX) - disparityImages.at(c).first.at<int>(cY, cX));
+                float actualDiff = abs(groundTruth->at<int>(cY, cX) - disparityImages.at(c).first.at<int>(cY, cX));
                 if (actualDiff < minDiff)
                 {
                     minDiff = actualDiff;

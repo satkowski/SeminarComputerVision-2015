@@ -132,6 +132,8 @@ int main(int argc, const char** argv)
     outputImage.convertTo(outputImage, CV_8U);
     if (!outputImageSwitched.empty())
         outputImageSwitched.convertTo(outputImageSwitched, CV_8U);
+    if (!optimalBlockSizeMat.empty())
+        optimalBlockSizeMat.convertTo(optimalBlockSizeMat, CV_8U);
 
 #pragma endregion
 
@@ -144,6 +146,11 @@ int main(int argc, const char** argv)
         minMaxLoc(outputImageSwitched, &minValue, &maxValue, &minLoc, &maxLoc);
         outputImageSwitched *= 255.0 / maxValue;
     }
+    if (optimalBlockSize)
+    {
+        minMaxLoc(optimalBlockSizeMat, &minValue, &maxValue, &minLoc, &maxLoc);
+        optimalBlockSizeMat *= 255.0 / maxValue;
+    }
 
 #pragma region Setting the windows
 
@@ -154,6 +161,12 @@ int main(int argc, const char** argv)
     namedWindow(OUTPUTNORMAL_WINDOW, 0);
     imshow(OUTPUTNORMAL_WINDOW, outputImage);
     imwrite(OUTPUTIMAGENORMAL_PATH, outputImage);
+    if (optimalBlockSize)
+    {
+        namedWindow(OUTPUT_OTIMALBLOCKSIZE_WINDOW, 0);
+        imshow(OUTPUT_OTIMALBLOCKSIZE_WINDOW, optimalBlockSizeMat);
+        imwrite(OUTPUTIMAGE_OPTIMALBLOCKSIZE_PATH, optimalBlockSizeMat);
+    }
     if (postProc && !pointCloud)
     {
         namedWindow(OUTPUTNORMALSWITCHED_WINDOW, 0);
@@ -194,12 +207,6 @@ Mat findeOptimalBlockSize(Vec<void*, 5>* userdata, Mat* groundTruth)
     {
         *blockRadius = actualBlockRadius;
         Mat leftDisparity = calcDisparity(userdata, NULL, true);
-
-        //userdata->val[0] = userdata->val[1];
-        //userdata->val[1] = firstImage;
-        //Mat rightDisparity = calcDisparity(userdata, NULL, false);
-        //userdata->val[1] = userdata->val[0];
-        //userdata->val[0] = firstImage;
 
         Point minLoc, maxLoc;
         double minValue, maxValue;

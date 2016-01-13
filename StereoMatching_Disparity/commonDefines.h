@@ -34,6 +34,7 @@
 #define OUTPUTNORMAL_WINDOW "Disparity"
 #define OUTPUTNORMALSWITCHED_WINDOW "DisparitySwitched"
 #define OUTPUT_POINTCLOUD_WINDOW "ColordPointCloud"
+#define OUTPUT_OTIMALBLOCKSIZE_WINDOW "OptimalBlockSize"
 
 // Outputimage name and path
 #define OUTPUTIMAGENORMALE_NAME "outputImage_StereoMatching_Disparity.jpg"
@@ -42,6 +43,8 @@
 #define OUTPUTIMAGESWITCHED_PATH "../Bilder/Output/" OUTPUTIMAGESWITCHED_NAME
 #define OUTPUTIMAGE_POINTCLOUD_NAME "outputImage_StereoMatching_PointCloud.jpg"
 #define OUTPUTIMAGE_POINTCLOUD_PATH "../Bilder/Output/" OUTPUTIMAGE_POINTCLOUD_NAME
+#define OUTPUTIMAGE_OPTIMALBLOCKSIZE_NAME "outputImage_StereoMatching_OptimalBlockSize.jpg"
+#define OUTPUTIMAGE_OPTIMALBLOCKSIZE_PATH "../Bilder/Output/" OUTPUTIMAGE_OPTIMALBLOCKSIZE_NAME
 
 // Postprocessing parameters
 #define MEDIANSIZE 5

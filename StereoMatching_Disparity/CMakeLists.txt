@@ -5,4 +5,4 @@ find_package( OpenCV REQUIRED )
 
 add_executable( StereoMatching_Disparity main.cpp stereoMatching.cpp postProcessing.cpp coloredPointCloud.cpp )
 
-target_link_libraries( ImageFilter ${OpenCV_LIBS} )
+target_link_libraries( StereoMatching_Disparity ${OpenCV_LIBS} )
